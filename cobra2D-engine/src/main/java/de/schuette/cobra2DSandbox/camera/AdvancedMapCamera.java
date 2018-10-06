@@ -1,7 +1,7 @@
 package de.schuette.cobra2DSandbox.camera;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 import java.awt.event.KeyEvent;
 import java.io.File;
 

@@ -7,7 +7,6 @@ import java.awt.DisplayMode;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -22,6 +21,7 @@ import javax.swing.SwingUtilities;
 import de.schuette.cobra2D.benchmark.Benchmark;
 import de.schuette.cobra2D.benchmark.Benchmarker;
 import de.schuette.cobra2D.entity.skills.Camera;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 
 public class WindowRenderer extends JFrame implements Renderer {
@@ -59,6 +59,7 @@ public class WindowRenderer extends JFrame implements Renderer {
 	protected Graphics2D worldViewGraphics;
 	private boolean drawEntityCenterPoint;
 
+	@Override
 	public void render() {
 
 		final Benchmarker benchmark = Benchmarker.getInstance();
@@ -66,15 +67,13 @@ public class WindowRenderer extends JFrame implements Renderer {
 		/*
 		 * Start benchmarking the whole rendering.
 		 */
-		final Benchmark rendercycle = benchmark
-				.createBenchmarkAndStart("Render cycle",
-						"Rendering of all elements that will be visible through cameras on the screen.");
+		final Benchmark rendercycle = benchmark.createBenchmarkAndStart("Render cycle",
+				"Rendering of all elements that will be visible through cameras on the screen.");
 
 		/*
 		 * Start benchmarking fitting cameras.
 		 */
-		final Benchmark fittingCameras = benchmark.createBenchmarkAndStart(
-				"Fitting cameras",
+		final Benchmark fittingCameras = benchmark.createBenchmarkAndStart("Fitting cameras",
 				"Rendering the cameras view resized to worldview buffer.");
 
 		// Try to avoid senseless
@@ -87,10 +86,8 @@ public class WindowRenderer extends JFrame implements Renderer {
 			if (camera.fitToResolution()) {
 				final Rectangle viewport = camera.getViewportRectangle();
 				// Prepare backbuffer for camera view
-				final VolatileImage cameraView = RenderToolkit
-						.createVolatileImage(viewport.width, viewport.height);
-				final Graphics2D camGraphis = (Graphics2D) cameraView
-						.getGraphics();
+				final VolatileImage cameraView = RenderToolkit.createVolatileImage(viewport.width, viewport.height);
+				final Graphics2D camGraphis = (Graphics2D) cameraView.getGraphics();
 				camera.render(camGraphis);
 				camGraphis.dispose();
 
@@ -99,17 +96,15 @@ public class WindowRenderer extends JFrame implements Renderer {
 					worldViewGraphics.setBackground(Color.BLACK);
 					worldViewGraphics.setColor(Color.BLACK);
 					// HINTERGRUND ZEICHNEN
-					worldViewGraphics.fillRect(0, 0, this.worldView.getWidth(),
-							this.worldView.getHeight());
+					worldViewGraphics.fillRect(0, 0, this.worldView.getWidth(), this.worldView.getHeight());
 					worldViewClear = true;
 				}
 
 				// Render cameraview to worldView
 				RenderToolkit.renderTo(
 
-				new Point(0, 0), new Dimension(this.worldView.getWidth(),
-						this.worldView.getHeight()), worldViewGraphics,
-						cameraView);
+						new Point(0, 0), new Dimension(this.worldView.getWidth(), this.worldView.getHeight()),
+						worldViewGraphics, cameraView);
 				worldViewChanged = true;
 
 			}
@@ -125,25 +120,20 @@ public class WindowRenderer extends JFrame implements Renderer {
 		bufferGraphics.fillRect(0, 0, this.resolutionX, this.resolutionY);
 
 		/*
-		 * Start benchmarking Render the worldview (that is used to resize to
-		 * screen resolution).
+		 * Start benchmarking Render the worldview (that is used to resize to screen
+		 * resolution).
 		 */
-		final Benchmark wordView = benchmark.createBenchmarkAndStart(
-				"Render world view", "Render the world view to backbuffer.");
+		final Benchmark wordView = benchmark.createBenchmarkAndStart("Render world view",
+				"Render the world view to backbuffer.");
 		// Render worldview to backbuffer only if someone was drawing to it
 		if (worldViewChanged) {
 			if (this.fullscreen) {
-				bufferGraphics.drawImage(this.worldView, 0, 0,
-						this.resolutionX, this.resolutionY, 0, 0,
-						this.worldView.getWidth(), this.worldView.getHeight(),
-						null);
+				bufferGraphics.drawImage(this.worldView, 0, 0, this.resolutionX, this.resolutionY, 0, 0,
+						this.worldView.getWidth(), this.worldView.getHeight(), null);
 			} else {
-				bufferGraphics.drawImage(this.worldView, this.CORRECTION_X,
-						this.CORRECTION_Y,
-						this.CORRECTION_X + this.resolutionX, this.CORRECTION_Y
-								+ this.resolutionY, 0, 0,
-						this.worldView.getWidth(), this.worldView.getHeight(),
-						null);
+				bufferGraphics.drawImage(this.worldView, this.CORRECTION_X, this.CORRECTION_Y,
+						this.CORRECTION_X + this.resolutionX, this.CORRECTION_Y + this.resolutionY, 0, 0,
+						this.worldView.getWidth(), this.worldView.getHeight(), null);
 			}
 		}
 		/*
@@ -154,20 +144,17 @@ public class WindowRenderer extends JFrame implements Renderer {
 		/*
 		 * Start benchmarking Non-Fitting cameras.
 		 */
-		final Benchmark nonFittingCameras = benchmark
-				.createBenchmarkAndStart("Non-Fitting cameras",
-						"Rendering the cameras that will not fit the screen resolution.");
+		final Benchmark nonFittingCameras = benchmark.createBenchmarkAndStart("Non-Fitting cameras",
+				"Rendering the cameras that will not fit the screen resolution.");
 		for (int i = 0; i < cameras.size(); i++) {
 			final Camera camera = cameras.get(i);
 			if (!camera.fitToResolution()) {
 				/*
 				 * Start benchmarking rendering of a non-fitting camera.
 				 */
-				final Benchmark cameraBenchmark = benchmark
-						.createBenchmarkAndStart("Camera: "
-								+ camera.getClass().getSimpleName(),
-								"Rendering the view camera "
-										+ camera.getClass().getSimpleName());
+				final Benchmark cameraBenchmark = benchmark.createBenchmarkAndStart(
+						"Camera: " + camera.getClass().getSimpleName(),
+						"Rendering the view camera " + camera.getClass().getSimpleName());
 				camera.render(bufferGraphics);
 				/*
 				 * Stop benchmarking
@@ -183,8 +170,8 @@ public class WindowRenderer extends JFrame implements Renderer {
 		/*
 		 * Start benchmarking Non-Fitting cameras.
 		 */
-		final Benchmark backbuffer = benchmark.createBenchmarkAndStart(
-				"Screen buffer flip", "Flipping the backbuffer to screen");
+		final Benchmark backbuffer = benchmark.createBenchmarkAndStart("Screen buffer flip",
+				"Flipping the backbuffer to screen");
 		this.bufferStrategy.show();
 		/*
 		 * Stop benchmarking the backbuffer flipping.
@@ -204,10 +191,9 @@ public class WindowRenderer extends JFrame implements Renderer {
 	public WindowRenderer() {
 	}
 
-	public void initializeRenderer(final Cobra2DEngine engine,
-			final int resolutionX, final int resolutionY, final int bitDepth,
-			final int refreshRate, final boolean fullscreen)
-			throws RendererException {
+	@Override
+	public void initializeRenderer(final Cobra2DEngine engine, final int resolutionX, final int resolutionY,
+			final int bitDepth, final int refreshRate, final boolean fullscreen) throws RendererException {
 		this.engine = engine;
 		this.resolutionX = resolutionX;
 		this.resolutionY = resolutionY;
@@ -253,8 +239,7 @@ public class WindowRenderer extends JFrame implements Renderer {
 			}
 		});
 
-		this.worldView = RenderToolkit.createVolatileImage(resolutionX,
-				resolutionY);
+		this.worldView = RenderToolkit.createVolatileImage(resolutionX, resolutionY);
 		this.worldViewGraphics = (Graphics2D) this.worldView.getGraphics();
 
 		if (fullscreen) {
@@ -263,10 +248,8 @@ public class WindowRenderer extends JFrame implements Renderer {
 
 		this.pack();
 		this.getContentPane().getGraphics().setColor(Color.BLACK);
-		this.getContentPane()
-				.getGraphics()
-				.fillRect(0, 0, this.getContentPane().getWidth(),
-						this.getContentPane().getHeight());
+		this.getContentPane().getGraphics().fillRect(0, 0, this.getContentPane().getWidth(),
+				this.getContentPane().getHeight());
 		this.setBackground(Color.BLACK);
 		this.setForeground(Color.BLACK);
 
@@ -275,27 +258,24 @@ public class WindowRenderer extends JFrame implements Renderer {
 		this.requestFocus();
 
 		if (fullscreen) {
-			final GraphicsEnvironment ge = GraphicsEnvironment
-					.getLocalGraphicsEnvironment();
+			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			this.gd = ge.getDefaultScreenDevice();
 			// setUndecorated(true); // no menu bar, borders, etc.
 			this.setIgnoreRepaint(true);
 			// turn off paint events since doing active rendering
 			this.setResizable(false);
 			if (!this.gd.isFullScreenSupported()) {
-				throw new RendererException(
-						"Fullscreenmode is not supported by vido card.");
+				throw new RendererException("Fullscreenmode is not supported by vido card.");
 			}
 			this.gd.setFullScreenWindow(this); // switch on FSEM
 			// we can now adjust the display modes, if we wish
 			try {
-				this.gd.setDisplayMode(new DisplayMode(this.resolutionX,
-						this.resolutionY, this.bitDepth, this.refreshRate));
+				this.gd.setDisplayMode(
+						new DisplayMode(this.resolutionX, this.resolutionY, this.bitDepth, this.refreshRate));
 
 			} catch (final Exception e) {
 				this.finish();
-				throw new RendererException("Cannot establish display mode! "
-						+ resolutionX + "x" + resolutionY);
+				throw new RendererException("Cannot establish display mode! " + resolutionX + "x" + resolutionY);
 			}
 
 		} else {
@@ -307,8 +287,7 @@ public class WindowRenderer extends JFrame implements Renderer {
 			// graphicsDevice.setDisplayMode(new DisplayMode(xResolution,
 			// yResolution, bitDepht , refreshRate));
 			this.setResizable(false);
-			this.setSize(resolutionX + this.CORRECTION_X + 5, resolutionY
-					+ this.CORRECTION_Y + 5);
+			this.setSize(resolutionX + this.CORRECTION_X + 5, resolutionY + this.CORRECTION_Y + 5);
 			this.setVisible(true);
 
 		}
@@ -317,8 +296,7 @@ public class WindowRenderer extends JFrame implements Renderer {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override
 				public void run() {
-					WindowRenderer.this
-							.createBufferStrategy(WindowRenderer.this.NUM_BUFFERS);
+					WindowRenderer.this.createBufferStrategy(WindowRenderer.this.NUM_BUFFERS);
 				}
 			});
 		} catch (final Exception e) {
@@ -333,21 +311,20 @@ public class WindowRenderer extends JFrame implements Renderer {
 
 		// initialized = true;
 
-		this.bufferGraphics = (Graphics2D) this.bufferStrategy
-				.getDrawGraphics();
+		this.bufferGraphics = (Graphics2D) this.bufferStrategy.getDrawGraphics();
 	}
 
 	public void setWorldViewSize(final Dimension size) {
-		this.worldView = RenderToolkit.createVolatileImage(size.width,
-				size.height);
+		this.worldView = RenderToolkit.createVolatileImage(size.width, size.height);
 
 	}
 
+	@Override
 	public Dimension getWorldViewSize() {
-		return new Dimension(this.worldView.getWidth(),
-				this.worldView.getHeight());
+		return new Dimension(this.worldView.getWidth(), this.worldView.getHeight());
 	}
 
+	@Override
 	public void finish() {
 
 		final Thread finisher = new Thread(new Runnable() {
@@ -358,8 +335,7 @@ public class WindowRenderer extends JFrame implements Renderer {
 				bufferGraphics.dispose();
 				// UNINITIALIZE RENDERING MODE
 				if (WindowRenderer.this.fullscreen) {
-					final GraphicsEnvironment ge = GraphicsEnvironment
-							.getLocalGraphicsEnvironment();
+					final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 					WindowRenderer.this.gd = ge.getDefaultScreenDevice();
 					WindowRenderer.this.gd.setFullScreenWindow(null);
 				}
@@ -380,10 +356,12 @@ public class WindowRenderer extends JFrame implements Renderer {
 		return new Dimension(this.resolutionX, this.resolutionY);
 	}
 
+	@Override
 	public int getResolutionX() {
 		return this.resolutionX;
 	}
 
+	@Override
 	public int getResolutionY() {
 		return this.resolutionY;
 	}
@@ -400,22 +378,27 @@ public class WindowRenderer extends JFrame implements Renderer {
 		return this.fullscreen;
 	}
 
+	@Override
 	public boolean isDrawEntityLines() {
 		return this.drawEntityLines;
 	}
 
+	@Override
 	public void setDrawEntityLines(final boolean drawEntityLines) {
 		this.drawEntityLines = drawEntityLines;
 	}
 
+	@Override
 	public boolean isDrawEntityPoints() {
 		return this.drawEntityPoints;
 	}
 
+	@Override
 	public void setDrawEntityPoints(final boolean drawEntityPoints) {
 		this.drawEntityPoints = drawEntityPoints;
 	}
 
+	@Override
 	public boolean isDrawEntities() {
 		return this.drawEntities;
 	}
@@ -430,30 +413,29 @@ public class WindowRenderer extends JFrame implements Renderer {
 		if (visible) {
 			this.setCursor(Cursor.getDefaultCursor());
 		} else {
-			this.setCursor(this.getToolkit().createCustomCursor(
-					new ImageIcon("").getImage(), new Point(0, 0), "No Cursor"));
+			this.setCursor(this.getToolkit().createCustomCursor(new ImageIcon("").getImage(), new java.awt.Point(0, 0),
+					"No Cursor"));
 		}
 
 	}
 
 	public void setCursorImage(final String texturAddress) {
-		final VolatileImage image = this.engine.getImageMemory().getImage(
-				texturAddress);
+		final VolatileImage image = this.engine.getImageMemory().getImage(texturAddress);
 		if (image == null) {
-			System.out
-					.println("Cannot set cursor to image with texture address '"
-							+ texturAddress + "'.");
+			System.out.println("Cannot set cursor to image with texture address '" + texturAddress + "'.");
 			return;
 		}
 		this.cursorVisible = true;
-		this.setCursor(this.getToolkit().createCustomCursor(
-				image.getSnapshot(), new Point(0, 0), "CustomCursor"));
+		this.setCursor(
+				this.getToolkit().createCustomCursor(image.getSnapshot(), new java.awt.Point(0, 0), "CustomCursor"));
 	}
 
+	@Override
 	public boolean isCursorVisible() {
 		return this.cursorVisible;
 	}
 
+	@Override
 	public Benchmarker getBenchmarker() {
 		return this.benchmarkAfterRendering;
 	}

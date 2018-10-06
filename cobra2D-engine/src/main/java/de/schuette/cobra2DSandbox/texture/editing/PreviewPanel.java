@@ -3,7 +3,6 @@ package de.schuette.cobra2DSandbox.texture.editing;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -13,10 +12,10 @@ import java.awt.image.VolatileImage;
 import javax.swing.JPanel;
 
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.rendering.RenderToolkit;
 
-public class PreviewPanel extends JPanel implements MouseMotionListener,
-		MouseListener {
+public class PreviewPanel extends JPanel implements MouseMotionListener, MouseListener {
 	/**
 	 * 
 	 */
@@ -44,6 +43,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener,
 		repaint();
 	}
 
+	@Override
 	protected void paintComponent(java.awt.Graphics g) {
 		super.paintComponent(g);
 
@@ -70,16 +70,13 @@ public class PreviewPanel extends JPanel implements MouseMotionListener,
 			g.setColor(Color.CYAN);
 			String message = "No Texture set!";
 			FontMetrics fontMetrics = g.getFontMetrics();
-			int halfStrWidth = Math2D.saveRound(fontMetrics
-					.stringWidth(message) / 2.0);
-			g.drawString(message,
-					Math2D.saveRound(getSize().width / 2.0 - halfStrWidth),
+			int halfStrWidth = Math2D.saveRound(fontMetrics.stringWidth(message) / 2.0);
+			g.drawString(message, Math2D.saveRound(getSize().width / 2.0 - halfStrWidth),
 					Math2D.saveRound(getSize().height / 2.0));
 		} else {
 			VolatileImage converted;
 			if (filter != null) {
-				converted = RenderToolkit.convertSpriteToTransparentSprite(
-						image, filter);
+				converted = RenderToolkit.convertSpriteToTransparentSprite(image, filter);
 			} else {
 				converted = image;
 			}
@@ -107,8 +104,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener,
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		xOffset = e.getPoint().x - previewPoint.x;
-		yOffset = e.getPoint().y - previewPoint.y;
+		xOffset = Math2D.saveRound(e.getPoint().x - previewPoint.x);
+		yOffset = Math2D.saveRound(e.getPoint().y - previewPoint.y);
 	}
 
 	@Override

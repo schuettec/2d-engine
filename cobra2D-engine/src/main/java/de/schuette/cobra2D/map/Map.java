@@ -1,6 +1,5 @@
 package de.schuette.cobra2D.map;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,13 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.schuette.cobra2D.entity.Entity;
-import de.schuette.cobra2D.entity.EntityPoint;
 import de.schuette.cobra2D.entity.skills.AlwaysVisible;
 import de.schuette.cobra2D.entity.skills.Camera;
 import de.schuette.cobra2D.entity.skills.Moveable;
 import de.schuette.cobra2D.entity.skills.Obstacle;
 import de.schuette.cobra2D.entity.skills.Renderable;
+import de.schuette.cobra2D.math.EntityPoint;
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 
 public class Map implements Serializable {
@@ -135,15 +135,15 @@ public class Map implements Serializable {
 			// Search for next index to add element
 			for (int i = 0; i < this.renderableEntities.size(); i++) {
 				final Renderable renderable = this.renderableEntities.get(i);
-				if (((Renderable) entity).getLayer() <= renderable.getLayer()) {
-					this.renderableEntities.add(i, (Renderable) entity);
+				if (entity.getLayer() <= renderable.getLayer()) {
+					this.renderableEntities.add(i, entity);
 					added = true;
 					break;
 				}
 			}
 
 			if (!added) {
-				this.renderableEntities.add((Renderable) entity);
+				this.renderableEntities.add(entity);
 			}
 		}
 	}
@@ -207,8 +207,8 @@ public class Map implements Serializable {
 
 	}
 
-	public List<Renderable> getVisibleRenderable(final int camPosX,
-			final int camPosY, final int camWidth, final int camHeight) {
+	public List<Renderable> getVisibleRenderable(final int camPosX, final int camPosY, final int camWidth,
+			final int camHeight) {
 
 		final List<Renderable> visibles = new ArrayList<Renderable>();
 
@@ -221,14 +221,11 @@ public class Map implements Serializable {
 			} else {
 
 				for (int a = 0; a < aktEntity.getPointList().size(); a++) {
-					final EntityPoint entityPoint = aktEntity.getPointList()
-							.get(a);
+					final EntityPoint entityPoint = aktEntity.getPointList().get(a);
 					final Point ol = new Point(camPosX, camPosY);
 
-					final Point ur = new Point(ol.x + camWidth, ol.y
-							+ camHeight);
-					if (Math2D.isInRect(entityPoint.getCurrentPosition(), ol,
-							ur)) {
+					final Point ur = new Point(ol.x + camWidth, ol.y + camHeight);
+					if (Math2D.isInRect(entityPoint.getCoordinates(), ol, ur)) {
 
 						visibles.add((Renderable) aktEntity);
 						break;
@@ -260,8 +257,8 @@ public class Map implements Serializable {
 	}
 
 	/**
-	 * Checks whether an entity hits a viewport. The viewport is specified by a
-	 * x, y, width and height value.
+	 * Checks whether an entity hits a viewport. The viewport is specified by a x,
+	 * y, width and height value.
 	 * 
 	 * @param entity
 	 *            The entity to test.
@@ -275,8 +272,8 @@ public class Map implements Serializable {
 	 *            Height of the viewport.
 	 * @return True if the entity hits the viewport. False otherwise.
 	 */
-	public boolean isVisibleViewport(final Entity entity, final int camPosX,
-			final int camPosY, final int camWidth, final int camHeight) {
+	public boolean isVisibleViewport(final Entity entity, final int camPosX, final int camPosY, final int camWidth,
+			final int camHeight) {
 
 		if (entity instanceof AlwaysVisible) {
 			return true;
@@ -285,7 +282,7 @@ public class Map implements Serializable {
 				final EntityPoint entityPoint = entity.getPointList().get(a);
 				final Point ol = new Point(camPosX, camPosY);
 				final Point ur = new Point(ol.x + camWidth, ol.y + camHeight);
-				if (Math2D.isInRect(entityPoint.getCurrentPosition(), ol, ur)) {
+				if (Math2D.isInRect(entityPoint.getCoordinates(), ol, ur)) {
 					return true;
 				}
 			}
@@ -360,8 +357,7 @@ public class Map implements Serializable {
 					// Do nothing, if no viewport is specified.
 					if (view != null) {
 						// If visible
-						if (this.isVisibleViewport(entity, view.x, view.y,
-								view.width, view.height)) {
+						if (this.isVisibleViewport(entity, view.x, view.y, view.width, view.height)) {
 							// Add to camera cache
 							final List<Entity> cache = cameraCache.get(cam);
 							cache.add(entity);
@@ -386,10 +382,10 @@ public class Map implements Serializable {
 
 	/**
 	 * Use this method to calculate all visible object for every camera without
-	 * doing a map update. After calling this method the cameras are able to
-	 * render their objects. If you use map updates in your engine, do not call
-	 * this method. The map update will do the job instead. Calling this method
-	 * while using map updates may cause inefficient map behavior.
+	 * doing a map update. After calling this method the cameras are able to render
+	 * their objects. If you use map updates in your engine, do not call this
+	 * method. The map update will do the job instead. Calling this method while
+	 * using map updates may cause inefficient map behavior.
 	 */
 	public void sendVisibleObjectToCameras() {
 		// Fire listener event
@@ -419,8 +415,7 @@ public class Map implements Serializable {
 					// Do nothing, if no viewport is specified.
 					if (view != null) {
 						// If visible
-						if (this.isVisibleViewport(entity, view.x, view.y,
-								view.width, view.height)) {
+						if (this.isVisibleViewport(entity, view.x, view.y, view.width, view.height)) {
 							// Add to camera cache
 							final List<Entity> cache = cameraCache.get(cam);
 							cache.add(entity);

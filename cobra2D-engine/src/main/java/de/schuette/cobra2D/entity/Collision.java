@@ -1,8 +1,7 @@
 package de.schuette.cobra2D.entity;
 
-import java.awt.Point;
-
 import de.schuette.cobra2D.math.Line;
+import de.schuette.cobra2D.math.Point;
 
 public class Collision {
 
@@ -11,8 +10,8 @@ public class Collision {
 	private final Line collisionLineOpponent;
 	private final Line collisionLineEntity;
 
-	public Collision(final Entity entity, final Point collisionPoint,
-			final Line collisionLineOpponent, final Line collisionLineEntity) {
+	public Collision(final Entity entity, final Point collisionPoint, final Line collisionLineOpponent,
+			final Line collisionLineEntity) {
 		super();
 		this.entity = entity;
 		this.collisionPoint = collisionPoint;

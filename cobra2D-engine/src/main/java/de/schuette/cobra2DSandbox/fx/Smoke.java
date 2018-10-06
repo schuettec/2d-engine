@@ -3,8 +3,6 @@ package de.schuette.cobra2DSandbox.fx;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.image.RGBImageFilter;
 import java.awt.image.VolatileImage;
 
@@ -13,6 +11,7 @@ import de.schuette.cobra2D.entity.EntityInitializeException;
 import de.schuette.cobra2D.entity.skills.Renderable;
 import de.schuette.cobra2D.math.Math2D;
 import de.schuette.cobra2D.math.Parabel;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.rendering.GradientTransparencyFilter;
 import de.schuette.cobra2D.rendering.RenderToolkit;
 import de.schuette.cobra2D.system.Cobra2DEngine;
@@ -31,8 +30,8 @@ public class Smoke extends Entity implements Renderable {
 
 	protected transient int[] distance; // Cannot be modified after creation
 	protected transient double[] angle; // Cannot be modified after creation
-	protected transient int[] distortionOffset; // Cannot be modified after
-												// creation
+	protected transient double[] distortionOffset; // Cannot be modified after
+													// creation
 
 	protected transient Parabel alphaParabel;// Cannot be modified after
 												// creation
@@ -77,37 +76,33 @@ public class Smoke extends Entity implements Renderable {
 	@Override
 	public void render(final Graphics2D graphics, final Point position) {
 		// graphics.setColor(Color.BLUE);
-		// graphics.fillOval(position.x, position.y, 5, 5);
+		// graphics.fillOval(position.getRoundX(), position.getRoundY(), 5, 5);
 
 		for (int i = particleCount - 1; i >= 0; i--) {
 
-			final Point distoredPosition = new Point(position.x
-					- distortionOffset[i], position.y - distortionOffset[i]);
+			final Point distoredPosition = new Point(position.getRoundX() - distortionOffset[i],
+					position.getRoundY() - distortionOffset[i]);
 
-			final float alpha = (float) this.alphaParabel
-					.getValue(this.distance[i]);
+			final float alpha = (float) this.alphaParabel.getValue(this.distance[i]);
 
 			// final BufferedImage img = RenderToolkit.rotateImage(
 			// this.getImage(), this.angle[i]);
 			VolatileImage img = getImage();
 
-			final Point renderPoint = Math2D.getCircle(distoredPosition,
-					this.distance[i], 225);
+			final Point renderPoint = Math2D.getCircle(distoredPosition, this.distance[i], 225);
 			// graphics.setColor(Color.RED);
 			// graphics.fillOval(renderPoint.x, renderPoint.y, 5, 5);
 			//
-			final Point sizePoint = Math2D.getCircle(distoredPosition,
-					this.distance[i], 45);
+			final Point sizePoint = Math2D.getCircle(distoredPosition, this.distance[i], 45);
 			// graphics.setColor(Color.GREEN);
 			// graphics.fillOval(sizePoint.x, sizePoint.y, 5, 5);
 
 			// Dimension newDim = new Dimension(distance[i] * 2, distance[i] *
 			// 2);
-			final Dimension newDim = new Dimension(sizePoint.x - renderPoint.x,
-					sizePoint.y - renderPoint.y);
+			final Dimension newDim = new Dimension(sizePoint.getRoundX() - renderPoint.getRoundX(),
+					sizePoint.getRoundY() - renderPoint.getRoundY());
 
-			RenderToolkit.renderTo(alpha, angle[i], renderPoint, newDim,
-					graphics, img);
+			RenderToolkit.renderTo(alpha, angle[i], renderPoint, newDim, graphics, img);
 		}
 
 		this.moveCloud();
@@ -127,7 +122,7 @@ public class Smoke extends Entity implements Renderable {
 	protected void calculateCloud() {
 		this.distance = new int[this.particleCount];
 		this.angle = new double[this.particleCount];
-		this.distortionOffset = new int[this.particleCount];
+		this.distortionOffset = new double[this.particleCount];
 		for (int i = 0; i < this.particleCount; i++) {
 			// Initialize randomly
 			this.calculateParticle(i);
@@ -136,35 +131,28 @@ public class Smoke extends Entity implements Renderable {
 
 	protected void calculateParticle(final int index) {
 		this.angle[index] = Math2D.random(180, 270);
-		this.distance[index] = Math2D.saveRound(index
-				* (this.maxRadius / (double) this.particleCount));
+		this.distance[index] = Math2D.saveRound(index * (this.maxRadius / (double) this.particleCount));
 		this.distortionOffset[index] = Math2D.random(0, maxPositionDistortion);
 	}
 
 	@Override
-	public void initialize(final Cobra2DEngine engine)
-			throws EntityInitializeException {
+	public void initialize(final Cobra2DEngine engine) throws EntityInitializeException {
 		super.initialize(engine);
 		this.engine = engine;
 		this.createRectangleEntityPointsWithPositionInCenter();
 
-		VolatileImage copyImage = RenderToolkit.createVolatileImage(getImage()
-				.getWidth(), getImage().getHeight());
+		VolatileImage copyImage = RenderToolkit.createVolatileImage(getImage().getWidth(), getImage().getHeight());
 		// Render the image to the copy but blurred
-		RenderToolkit.renderTo(5, new Point(0, 0),
-				(Graphics2D) copyImage.getGraphics(), getImage());
+		RenderToolkit.renderTo(5, new Point(0, 0), (Graphics2D) copyImage.getGraphics(), getImage());
 
 		if (filter != null) {
-			this.setImage(RenderToolkit.convertSpriteToTransparentSprite(
-					copyImage, filter));
+			this.setImage(RenderToolkit.convertSpriteToTransparentSprite(copyImage, filter));
 		} else {
-			this.setImage(RenderToolkit.convertSpriteToTransparentSprite(
-					copyImage, new GradientTransparencyFilter(
-							Smoke.SMOKE_COLOR, Smoke.TRANSPARENCY_COLOR)));
+			this.setImage(RenderToolkit.convertSpriteToTransparentSprite(copyImage,
+					new GradientTransparencyFilter(Smoke.SMOKE_COLOR, Smoke.TRANSPARENCY_COLOR)));
 		}
 
-		this.alphaParabel = new Parabel(new Point2D.Double(0, 0),
-				new Point2D.Double(this.maxRadius / 2.0, 1), true);
+		this.alphaParabel = new Parabel(new Point(0, 0), new Point(this.maxRadius / 2.0, 1), true);
 
 		this.calculateCloud();
 	}

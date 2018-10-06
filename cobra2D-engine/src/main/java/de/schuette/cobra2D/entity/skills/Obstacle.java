@@ -1,6 +1,6 @@
 package de.schuette.cobra2D.entity.skills;
 
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 import java.io.Serializable;
 
 import de.schuette.cobra2D.entity.Entity;

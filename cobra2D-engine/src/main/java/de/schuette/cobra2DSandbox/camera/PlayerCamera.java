@@ -2,18 +2,18 @@ package de.schuette.cobra2DSandbox.camera;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
 import de.schuette.cobra2D.controller.ControllerListener;
 import de.schuette.cobra2D.entity.Entity;
-import de.schuette.cobra2D.entity.EntityPoint;
 import de.schuette.cobra2D.entity.skills.Camera;
 import de.schuette.cobra2D.entity.skills.Renderable;
+import de.schuette.cobra2D.math.EntityPoint;
 import de.schuette.cobra2D.math.Line;
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 
 public class PlayerCamera extends Entity implements Camera, ControllerListener {
@@ -44,11 +44,9 @@ public class PlayerCamera extends Entity implements Camera, ControllerListener {
 
 		if (this.player != null) {
 			this.viewport.x = (int) Math
-					.round(this.player.getCenterPoint().x
-							- (this.engine.getRenderer().getWorldViewSize().width / 2.0));
-			this.viewport.y = (int) Math
-					.round(this.player.getCenterPoint().y
-							- (this.engine.getRenderer().getWorldViewSize().height / 2.0));
+					.round(this.player.getCenterPoint().x - (this.engine.getRenderer().getWorldViewSize().width / 2.0));
+			this.viewport.y = (int) Math.round(
+					this.player.getCenterPoint().y - (this.engine.getRenderer().getWorldViewSize().height / 2.0));
 		}
 
 		if (this.capturedObjects != null) {
@@ -57,18 +55,14 @@ public class PlayerCamera extends Entity implements Camera, ControllerListener {
 				if (entity instanceof Renderable) {
 					final Renderable renderable = (Renderable) entity;
 					if (this.engine.getRenderer().isDrawEntities()) {
-						final Point relativePosition = Math2D
-								.getRelativePointTranslation(entity,
-										this.viewport);
+						final Point relativePosition = Math2D.getRelativePointTranslation(entity, this.viewport);
 						renderable.render(bufferGraphics, relativePosition);
 					}
 					if (this.engine.getRenderer().isDrawEntityLines()) {
-						this.drawEntityLines(entity, this.viewport.x,
-								this.viewport.y, bufferGraphics);
+						this.drawEntityLines(entity, this.viewport.x, this.viewport.y, bufferGraphics);
 					}
 					if (this.engine.getRenderer().isDrawEntityPoints()) {
-						this.drawEntityPoints(entity, this.viewport.x,
-								this.viewport.y, bufferGraphics);
+						this.drawEntityPoints(entity, this.viewport.x, this.viewport.y, bufferGraphics);
 					}
 
 				}
@@ -78,28 +72,25 @@ public class PlayerCamera extends Entity implements Camera, ControllerListener {
 
 	}
 
-	public void drawEntityLines(final Entity entity, final int camPosX,
-			final int camPosY, final Graphics2D graphics) {
+	public void drawEntityLines(final Entity entity, final int camPosX, final int camPosY, final Graphics2D graphics) {
 		final Color old = graphics.getColor();
 		graphics.setColor(Color.red);
 
 		for (final Line line : entity.getLineList()) {
 
-			graphics.drawLine((int) line.getX1().x - camPosX,
-					(int) line.getX1().y - camPosY, (int) line.getX2().x
-							- camPosX, (int) line.getX2().y - camPosY);
+			graphics.drawLine((int) line.getX1().x - camPosX, (int) line.getX1().y - camPosY,
+					(int) line.getX2().x - camPosX, (int) line.getX2().y - camPosY);
 		}
 		graphics.setColor(old);
 
 	}
 
-	public void drawEntityPoints(final Entity entity, final int camPosX,
-			final int camPosY, final Graphics2D graphics) {
+	public void drawEntityPoints(final Entity entity, final int camPosX, final int camPosY, final Graphics2D graphics) {
 		final Color old = graphics.getColor();
 		graphics.setColor(Color.red);
 		for (final EntityPoint point : entity.getPointList()) {
-			graphics.drawOval(point.getCurrentPosition().x - camPosX,
-					point.getCurrentPosition().y - camPosY, 5, 5);
+			graphics.drawOval(point.getCoordinates().getRoundX() - camPosX,
+					point.getCoordinates().getRoundY() - camPosY, 5, 5);
 		}
 		graphics.setColor(old);
 

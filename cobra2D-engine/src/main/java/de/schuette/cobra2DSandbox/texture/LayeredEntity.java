@@ -1,7 +1,7 @@
 package de.schuette.cobra2DSandbox.texture;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 
 import de.schuette.cobra2D.entity.Entity;
 import de.schuette.cobra2D.entity.editing.Editable;

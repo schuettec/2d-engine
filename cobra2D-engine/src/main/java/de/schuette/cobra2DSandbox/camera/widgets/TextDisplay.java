@@ -3,7 +3,7 @@ package de.schuette.cobra2DSandbox.camera.widgets;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.Scanner;
@@ -28,8 +28,8 @@ public class TextDisplay implements Serializable {
 		Font font = g.getFont();
 		g.setFont(new Font("Courier", Font.PLAIN, 10));
 
-		int y = this.position.y;
-		int x = this.position.x;
+		int y = this.position.getRoundY();
+		int x = this.position.getRoundX();
 
 		while (scan.hasNextLine()) {
 			final String line = scan.nextLine();
@@ -41,7 +41,7 @@ public class TextDisplay implements Serializable {
 				g.drawString(character, x, y);
 				x += g.getFontMetrics().stringWidth(character);
 			}
-			x = this.position.x;
+			x = this.position.getRoundX();
 			y += g.getFontMetrics().getHeight();
 		}
 		g.setFont(font);

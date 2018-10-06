@@ -1,12 +1,12 @@
 package de.schuette.cobra2DSandbox.modifier;
 
 import java.awt.Dimension;
-import java.awt.Point;
 
 import de.schuette.cobra2D.entity.Entity;
 import de.schuette.cobra2D.entity.editing.Editable;
 import de.schuette.cobra2D.entity.editing.EditableProperty;
 import de.schuette.cobra2D.entity.editing.NumberEditor;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 
 @Editable
@@ -27,6 +27,7 @@ public class ArrayModifier extends Modifier {
 		this.yMultiplier = 1;
 	}
 
+	@Override
 	public void execute(final Cobra2DEngine engine) {
 
 		// Create all the entities side by side. Start at the point
@@ -47,7 +48,7 @@ public class ArrayModifier extends Modifier {
 				engine.getMap().addEntity(newEntity);
 			}
 			if (newPosition != null && eDim != null) {
-				newPosition.x = this.position.x;
+				newPosition.x = this.position.getRoundX();
 				newPosition.y += eDim.height;
 			}
 

@@ -4,15 +4,15 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.image.VolatileImage;
 import java.util.Arrays;
 
 import de.schuette.cobra2D.entity.Entity;
 import de.schuette.cobra2D.entity.EntityInitializeException;
-import de.schuette.cobra2D.entity.EntityPoint;
 import de.schuette.cobra2D.entity.skills.Renderable;
+import de.schuette.cobra2D.math.EntityPoint;
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.rendering.GradientTransparencyFilter;
 import de.schuette.cobra2D.rendering.RenderToolkit;
 import de.schuette.cobra2D.system.Cobra2DEngine;
@@ -71,9 +71,8 @@ public class Flash extends Entity implements Renderable {
 	private final int width = DEFAULT_WIDTH;
 
 	/**
-	 * Constructs a flash between start and end point. Please specify the
-	 * maximal distance between start and end point to improve the quality of
-	 * the graphics.
+	 * Constructs a flash between start and end point. Please specify the maximal
+	 * distance between start and end point to improve the quality of the graphics.
 	 * 
 	 * @param start
 	 * @param end
@@ -86,24 +85,22 @@ public class Flash extends Entity implements Renderable {
 	// }
 
 	protected void randomizeParameters() {
-		this.splits = Math2D.random(5, this.maxSplits);
-		this.distortion = Math2D.random(10, this.maxDistortion);
+		this.splits = Math2D.saveRound(Math2D.random(5, this.maxSplits));
+		this.distortion = Math2D.saveRound(Math2D.random(10, this.maxDistortion));
 	}
 
 	@Override
 	public void render(final Graphics2D graphics, final Point position) {
-		this.renderToPoint(graphics, this.glowBackbuffer[this.currentBuffer],
-				this.alpha, this.start, this.end, this.reflect);
-		this.renderToPoint(graphics, this.lightBackbuffer[this.currentBuffer],
-				this.alpha, this.start, this.end, this.reflect);
+		this.renderToPoint(graphics, this.glowBackbuffer[this.currentBuffer], this.alpha, this.start, this.end,
+				this.reflect);
+		this.renderToPoint(graphics, this.lightBackbuffer[this.currentBuffer], this.alpha, this.start, this.end,
+				this.reflect);
 
 		if (this.lastAlpha < 1f && this.lastAlpha >= 0) {
-			this.renderToPoint(graphics,
-					this.glowBackbuffer[this.lastBufferIndex], this.lastAlpha,
-					this.start, this.end, this.reflect);
-			this.renderToPoint(graphics,
-					this.lightBackbuffer[this.lastBufferIndex], this.lastAlpha,
-					this.start, this.end, this.reflect);
+			this.renderToPoint(graphics, this.glowBackbuffer[this.lastBufferIndex], this.lastAlpha, this.start,
+					this.end, this.reflect);
+			this.renderToPoint(graphics, this.lightBackbuffer[this.lastBufferIndex], this.lastAlpha, this.start,
+					this.end, this.reflect);
 		}
 
 		this.alpha -= 0.2f;
@@ -115,7 +112,7 @@ public class Flash extends Entity implements Renderable {
 			this.alpha = 1f;
 			this.currentBuffer++;
 			// Define reflect attribute this frame cycle
-			final int random = Math2D.random(0, 1000);
+			final int random = Math2D.saveRound(Math2D.random(0, 1000));
 			if (random % 2 == 0) {
 				this.reflect = true;
 			}
@@ -135,10 +132,8 @@ public class Flash extends Entity implements Renderable {
 			public void run() {
 				// int random = Math2D.random(0, 100) % precalcCount;
 				final Point[] points = Flash.this.calcPoints();
-				Flash.this.glowBackbuffer[Flash.this.toReplaceBuffer] = Flash.this
-						.createGlowBackbuffer(points);
-				Flash.this.lightBackbuffer[Flash.this.toReplaceBuffer] = Flash.this
-						.createLightningBackbuffer(points);
+				Flash.this.glowBackbuffer[Flash.this.toReplaceBuffer] = Flash.this.createGlowBackbuffer(points);
+				Flash.this.lightBackbuffer[Flash.this.toReplaceBuffer] = Flash.this.createLightningBackbuffer(points);
 				Flash.this.toReplaceBuffer++;
 				if (Flash.this.toReplaceBuffer >= Flash.this.precalcCount) {
 					Flash.this.toReplaceBuffer = 0;
@@ -149,13 +144,12 @@ public class Flash extends Entity implements Renderable {
 	}
 
 	/**
-	 * Renders the given image to a calculated position so that the content of
-	 * the texture, hits the from-point with its start-point and the to-point
-	 * with is end-point. The start-point is a virtual point within the texture
-	 * and is located at the point (0, height/2). The endpoint is a virtual
-	 * point within the texture located at (width, height/2). Every content
-	 * between start and end will be rotated and resized to match the given from
-	 * and to point.
+	 * Renders the given image to a calculated position so that the content of the
+	 * texture, hits the from-point with its start-point and the to-point with is
+	 * end-point. The start-point is a virtual point within the texture and is
+	 * located at the point (0, height/2). The endpoint is a virtual point within
+	 * the texture located at (width, height/2). Every content between start and end
+	 * will be rotated and resized to match the given from and to point.
 	 * 
 	 * @param g
 	 *            The graphics object to render to
@@ -166,28 +160,26 @@ public class Flash extends Entity implements Renderable {
 	 * @param to
 	 *            The to point in the target image.
 	 * @param reflectRandomly
-	 *            Makes the method render the image in the buffer reflected, so
-	 *            the flash looks more randomly
+	 *            Makes the method render the image in the buffer reflected, so the
+	 *            flash looks more randomly
 	 */
 
-	protected void renderToPoint(final Graphics2D g, final VolatileImage img,
-			final float alpha, final Point from, final Point to,
-			final boolean reflect) {
+	protected void renderToPoint(final Graphics2D g, final VolatileImage img, final float alpha, final Point from,
+			final Point to, final boolean reflect) {
 		// Rotate correctly
-		final int angle = Math2D.getAngle(from, to);
+		final double angle = Math2D.getAngle(from, to);
 
 		final int distance = Math2D.saveRound(Math2D.getEntfernung(from, to));
 
 		// g.setColor(Color.BLUE);
 		// g.drawRect(from.x, from.y, distance, distance);
 
-		final Point flashMiddlePoint = new Point(Math2D.saveRound(from.x
-				+ distance / 2.0), Math2D.saveRound(from.y + distance / 2.0));
-		final Point flashStart = Math2D.getCircle(flashMiddlePoint,
-				Math2D.saveRound(distance / 2.0), angle + 180);
+		final Point flashMiddlePoint = new Point(Math2D.saveRound(from.x + distance / 2.0),
+				Math2D.saveRound(from.y + distance / 2.0));
+		final Point flashStart = Math2D.getCircle(flashMiddlePoint, Math2D.saveRound(distance / 2.0), angle + 180);
 
-		final int xCorrected = from.x - (flashStart.x - from.x);
-		final int yCorrected = from.y - (flashStart.y - from.y);
+		final double xCorrected = from.x - (flashStart.x - from.x);
+		final double yCorrected = from.y - (flashStart.y - from.y);
 		final Point corrected = new Point(xCorrected, yCorrected);
 
 		// g.fillOval(flashMiddlePoint.x, flashMiddlePoint.y, 5, 5);
@@ -201,19 +193,16 @@ public class Flash extends Entity implements Renderable {
 		if (reflect) {
 			// Turn it with 180 degrees to make it look more randomly
 			// rotated = RenderToolkit.rotateImage(img, angle + 180);
-			RenderToolkit.renderTo(alpha, angle + 180, corrected,
-					new Dimension(distance, distance), g, img);
+			RenderToolkit.renderTo(alpha, angle + 180, corrected, new Dimension(distance, distance), g, img);
 		} else {
-			RenderToolkit.renderTo(alpha, angle, corrected, new Dimension(
-					distance, distance), g, img);
+			RenderToolkit.renderTo(alpha, angle, corrected, new Dimension(distance, distance), g, img);
 		}
 
 	}
 
 	public VolatileImage createLightningBackbuffer(final Point[] points) {
 		// Lightning Part
-		final VolatileImage lightBuffer = RenderToolkit.createVolatileImage(
-				this.size.width + 20, this.size.width + 20);
+		final VolatileImage lightBuffer = RenderToolkit.createVolatileImage(this.size.width + 20, this.size.width + 20);
 		final Graphics2D g = (Graphics2D) lightBuffer.getGraphics();
 		g.setColor(Flash.TRANSPARENCY_COLOR);
 		g.fillRect(0, 0, lightBuffer.getWidth(), lightBuffer.getHeight());
@@ -221,25 +210,22 @@ public class Flash extends Entity implements Renderable {
 		this.drawPoints(g, points, Flash.LIGHTNING_COLOR, 2);
 
 		// Target buffer used to render the blurre glowBuffer
-		VolatileImage targetBuffer = RenderToolkit.createVolatileImage(
-				this.size.width + 20, this.size.width + 20);
+		VolatileImage targetBuffer = RenderToolkit.createVolatileImage(this.size.width + 20, this.size.width + 20);
 		final Graphics2D target = (Graphics2D) targetBuffer.getGraphics();
 		target.setColor(Flash.TRANSPARENCY_COLOR);
 		target.fillRect(0, 0, targetBuffer.getWidth(), targetBuffer.getHeight());
 		RenderToolkit.renderTo(2, new Point(0, 0), target, lightBuffer);
 
 		// Backbuffer
-		targetBuffer = RenderToolkit.convertSpriteToTransparentSprite(
-				targetBuffer, new GradientTransparencyFilter(
-						Flash.LIGHTNING_COLOR, Flash.TRANSPARENCY_COLOR));
+		targetBuffer = RenderToolkit.convertSpriteToTransparentSprite(targetBuffer,
+				new GradientTransparencyFilter(Flash.LIGHTNING_COLOR, Flash.TRANSPARENCY_COLOR));
 		return targetBuffer;
 	}
 
 	public VolatileImage createGlowBackbuffer(final Point[] points) {
 
 		// Glowpart
-		final VolatileImage glowBuffer = RenderToolkit.createVolatileImage(
-				this.size.width + 20, this.size.width + 20);
+		final VolatileImage glowBuffer = RenderToolkit.createVolatileImage(this.size.width + 20, this.size.width + 20);
 		final Graphics2D g = (Graphics2D) glowBuffer.getGraphics();
 		g.setColor(Flash.TRANSPARENCY_COLOR);
 		g.fillRect(0, 0, glowBuffer.getWidth(), glowBuffer.getHeight());
@@ -247,22 +233,19 @@ public class Flash extends Entity implements Renderable {
 		this.drawPoints(g, points, Flash.GLOW_COLOR, 8);
 
 		// Target buffer used to render the blurre glowBuffer
-		VolatileImage targetBuffer = RenderToolkit.createVolatileImage(
-				this.size.width + 20, this.size.width + 20);
+		VolatileImage targetBuffer = RenderToolkit.createVolatileImage(this.size.width + 20, this.size.width + 20);
 		final Graphics2D target = (Graphics2D) targetBuffer.getGraphics();
 		target.setColor(Flash.TRANSPARENCY_COLOR);
 		target.fillRect(0, 0, targetBuffer.getWidth(), targetBuffer.getHeight());
 		RenderToolkit.renderTo(20, new Point(0, 0), target, glowBuffer);
 
 		// Backbuffer
-		targetBuffer = RenderToolkit.convertSpriteToTransparentSprite(
-				targetBuffer, new GradientTransparencyFilter(Flash.GLOW_COLOR,
-						Flash.TRANSPARENCY_COLOR));
+		targetBuffer = RenderToolkit.convertSpriteToTransparentSprite(targetBuffer,
+				new GradientTransparencyFilter(Flash.GLOW_COLOR, Flash.TRANSPARENCY_COLOR));
 		return targetBuffer;
 	}
 
-	protected void drawPoints(final Graphics2D g, final Point[] points,
-			final Color color, final int strokeWidth) {
+	protected void drawPoints(final Graphics2D g, final Point[] points, final Color color, final int strokeWidth) {
 		for (int i = 1; i < points.length; i++) {
 			this.drawSegment(g, color, points[i - 1], points[i], strokeWidth);
 		}
@@ -273,35 +256,30 @@ public class Flash extends Entity implements Renderable {
 
 		final double degrees = 0;// Math2D.getAngle(start, end);
 		// WorldCoordinates to bufferCoordinates
-		final Point start = new Point(10,
-				Math2D.saveRound(this.size.width / 2.0));
-		final Point end = new Point(this.size.width,
-				Math2D.saveRound(this.size.width / 2.0));
+		final Point start = new Point(10, Math2D.saveRound(this.size.width / 2.0));
+		final Point end = new Point(this.size.width, Math2D.saveRound(this.size.width / 2.0));
 		// Direction
 		final double distance = Math2D.getEntfernung(start, end);
 
 		final int pointCount = Math2D.saveRound(distance / 100 * this.splits);
 
 		final Point[] points = new Point[pointCount];
-		final int[] distances = this.getRandomSplitting(0,
-				Math2D.saveRound(distance), pointCount);
+		final double[] distances = this.getRandomSplitting(0, Math2D.saveRound(distance), pointCount);
 
 		points[0] = start;
 		points[pointCount - 1] = end;
 
 		for (int i = 1; i < points.length - 1; i++) {
 			points[i] = Math2D.getCircle(start, distances[i], degrees);
-			final int distort = Math2D.random(-this.distortion,
-					+this.distortion);
+			final double distort = Math2D.random(-this.distortion, +this.distortion);
 			points[i] = Math2D.getCircle(points[i], distort, degrees + 90);
 		}
 
 		return points;
 	}
 
-	protected int[] getRandomSplitting(final int min, final int max,
-			final int splits) {
-		final int[] numbers = new int[splits];
+	protected double[] getRandomSplitting(final int min, final int max, final int splits) {
+		final double[] numbers = new double[splits];
 		numbers[0] = min;
 		for (int i = 1; i < numbers.length; i++) {
 			numbers[i] = Math2D.random(min, max);
@@ -311,11 +289,11 @@ public class Flash extends Entity implements Renderable {
 
 	}
 
-	private void drawSegment(final Graphics2D graphics, final Color color,
-			final Point lastPoint, final Point next, final int strokeWidth) {
+	private void drawSegment(final Graphics2D graphics, final Color color, final Point lastPoint, final Point next,
+			final int strokeWidth) {
 		graphics.setColor(color);
 		graphics.setStroke(new BasicStroke(strokeWidth));
-		graphics.drawLine(lastPoint.x, lastPoint.y, next.x, next.y);
+		graphics.drawLine(lastPoint.getRoundX(), lastPoint.getRoundY(), next.getRoundX(), next.getRoundY());
 	}
 
 	@Override
@@ -324,12 +302,10 @@ public class Flash extends Entity implements Renderable {
 	}
 
 	@Override
-	public void initialize(final Cobra2DEngine engine)
-			throws EntityInitializeException {
+	public void initialize(final Cobra2DEngine engine) throws EntityInitializeException {
 
 		if (start == null || end == null) {
-			throw new EntityInitializeException(
-					"Start and end attributs cannot be empty.");
+			throw new EntityInitializeException("Start and end attributs cannot be empty.");
 		}
 
 		super.initialize(engine);
@@ -341,12 +317,12 @@ public class Flash extends Entity implements Renderable {
 
 		// Create entity points to make flash visible
 		pointList.clear();
-		final EntityPoint p1 = new EntityPoint(0, 0, this);
-		p1.setCurrentPosition(this.start);
+		final EntityPoint p1 = new EntityPoint(0, 0);
+		p1.setByPosition(this.start);
 		pointList.add(p1);
 
-		final EntityPoint p2 = new EntityPoint(0, 0, this);
-		p2.setCurrentPosition(this.end);
+		final EntityPoint p2 = new EntityPoint(0, 0);
+		p2.setByPosition(this.end);
 		pointList.add(p2);
 
 		// Prerender backbuffers
@@ -356,8 +332,7 @@ public class Flash extends Entity implements Renderable {
 			for (int i = 0; i < this.precalcCount; i++) {
 				final Point[] points = this.calcPoints();
 				this.glowBackbuffer[i] = this.createGlowBackbuffer(points);
-				this.lightBackbuffer[i] = this
-						.createLightningBackbuffer(points);
+				this.lightBackbuffer[i] = this.createLightningBackbuffer(points);
 			}
 		}
 
@@ -381,12 +356,12 @@ public class Flash extends Entity implements Renderable {
 
 	@Override
 	public void setPosition(Point position) {
-		int diffX = end.x - start.x;
-		int diffY = end.y - start.y;
+		double diffX = end.x - start.x;
+		double diffY = end.y - start.y;
 
 		super.setPosition(position);
 		this.start = position;
-		this.end = new Point(position.x + diffX, position.y + diffY);
+		this.end = new Point(position.getRoundX() + diffX, position.getRoundY() + diffY);
 	}
 
 	public int getMaxSplits() {

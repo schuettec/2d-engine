@@ -3,7 +3,6 @@ package de.schuette.cobra2D.rendering;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Point;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -14,10 +13,8 @@ import de.schuette.cobra2D.system.Cobra2DEngine;
 public interface Renderer {
 	public void render();
 
-	public void initializeRenderer(final Cobra2DEngine engine,
-			final int resolutionX, final int resolutionY, final int bitDepth,
-			final int refreshRate, final boolean fullscreen)
-			throws RendererException;
+	public void initializeRenderer(final Cobra2DEngine engine, final int resolutionX, final int resolutionY,
+			final int bitDepth, final int refreshRate, final boolean fullscreen) throws RendererException;
 
 	public FontMetrics getFontMetrics(Font font);
 
@@ -55,7 +52,7 @@ public interface Renderer {
 
 	public boolean isDrawEntityPoints();
 
-	public Point getLocation();
+	public java.awt.Point getLocation();
 
 	public void setDrawEntityLines(boolean b);
 

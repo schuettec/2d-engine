@@ -2,7 +2,6 @@ package de.schuette.cobra2DSandbox.camera;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -12,11 +11,12 @@ import de.schuette.cobra2D.benchmark.Benchmarker;
 import de.schuette.cobra2D.controller.Controller;
 import de.schuette.cobra2D.controller.ControllerListener;
 import de.schuette.cobra2D.entity.Entity;
-import de.schuette.cobra2D.entity.EntityPoint;
 import de.schuette.cobra2D.entity.skills.Camera;
 import de.schuette.cobra2D.entity.skills.Renderable;
+import de.schuette.cobra2D.math.EntityPoint;
 import de.schuette.cobra2D.math.Line;
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 
 public class MapCamera extends Entity implements Camera, ControllerListener {
@@ -39,16 +39,15 @@ public class MapCamera extends Entity implements Camera, ControllerListener {
 
 		final int viewWidth = engine.getRenderer().getResolutionX();
 		final int viewHeight = engine.getRenderer().getResolutionY();
-		this.viewport = new Rectangle(this.position.x, this.position.y,
-				viewWidth, viewHeight);
+		this.viewport = new Rectangle(this.position.getRoundX(), this.position.getRoundY(), viewWidth, viewHeight);
 
 	}
 
 	@Override
 	public void render(final Graphics2D bufferGraphics) {
 
-		this.viewport.x = this.position.x;
-		this.viewport.y = this.position.y;
+		this.viewport.x = this.position.getRoundX();
+		this.viewport.y = this.position.getRoundY();
 
 		final Controller controller = this.engine.getController();
 		if (controller != null) {
@@ -64,16 +63,12 @@ public class MapCamera extends Entity implements Camera, ControllerListener {
 		}
 
 		if (this.capturedObjects != null) {
-			final boolean drawEntityLines = this.engine.getRenderer()
-					.isDrawEntityLines();
-			final boolean drawEntities = this.engine.getRenderer()
-					.isDrawEntities();
-			final boolean drawEntityPoints = this.engine.getRenderer()
-					.isDrawEntityPoints();
+			final boolean drawEntityLines = this.engine.getRenderer().isDrawEntityLines();
+			final boolean drawEntities = this.engine.getRenderer().isDrawEntities();
+			final boolean drawEntityPoints = this.engine.getRenderer().isDrawEntityPoints();
 			final Benchmarker benchmark = Benchmarker.getInstance();
 
-			Benchmark bench = benchmark.createBenchmarkAndStart("Entities",
-					"Rendern aller Entities der Map Camera");
+			Benchmark bench = benchmark.createBenchmarkAndStart("Entities", "Rendern aller Entities der Map Camera");
 
 			for (final Entity entity : this.capturedObjects) {
 				if (entity instanceof Renderable) {
@@ -100,13 +95,10 @@ public class MapCamera extends Entity implements Camera, ControllerListener {
 
 							final String description = sb.toString();
 
-							entityBenchmark = benchmark
-									.createBenchmarkAndStart(title, description);
+							entityBenchmark = benchmark.createBenchmarkAndStart(title, description);
 						}
 
-						final Point relativePosition = Math2D
-								.getRelativePointTranslation(entity,
-										this.viewport);
+						final Point relativePosition = Math2D.getRelativePointTranslation(entity, this.viewport);
 						renderable.render(bufferGraphics, relativePosition);
 
 						/*
@@ -118,12 +110,10 @@ public class MapCamera extends Entity implements Camera, ControllerListener {
 					}
 
 					if (drawEntityLines) {
-						this.drawEntityLines(entity, this.viewport.x,
-								this.viewport.y, bufferGraphics);
+						this.drawEntityLines(entity, this.viewport.x, this.viewport.y, bufferGraphics);
 					}
 					if (drawEntityPoints) {
-						this.drawEntityPoints(entity, this.viewport.x,
-								this.viewport.y, bufferGraphics);
+						this.drawEntityPoints(entity, this.viewport.x, this.viewport.y, bufferGraphics);
 					}
 
 				}
@@ -135,30 +125,27 @@ public class MapCamera extends Entity implements Camera, ControllerListener {
 
 	}
 
-	public void drawEntityLines(final Entity entity, final int camPosX,
-			final int camPosY, final Graphics2D graphics) {
+	public void drawEntityLines(final Entity entity, final int camPosX, final int camPosY, final Graphics2D graphics) {
 		final Color old = graphics.getColor();
 		graphics.setColor(Color.red);
 
 		for (final Line line : entity.getLineList()) {
 
-			graphics.drawLine((int) line.getX1().x - camPosX,
-					(int) line.getX1().y - camPosY, (int) line.getX2().x
-							- camPosX, (int) line.getX2().y - camPosY);
+			graphics.drawLine((int) line.getX1().x - camPosX, (int) line.getX1().y - camPosY,
+					(int) line.getX2().x - camPosX, (int) line.getX2().y - camPosY);
 		}
 		graphics.setColor(old);
 
 	}
 
-	public void drawEntityPoints(final Entity entity, final int camPosX,
-			final int camPosY, final Graphics2D graphics) {
+	public void drawEntityPoints(final Entity entity, final int camPosX, final int camPosY, final Graphics2D graphics) {
 		final Color old = graphics.getColor();
 		graphics.setColor(Color.red);
 		final List<EntityPoint> list = entity.getPointList();
 		for (int i = 0; i < list.size(); i++) {
 			final EntityPoint point = list.get(i);
-			graphics.drawOval(point.getCurrentPosition().x - camPosX,
-					point.getCurrentPosition().y - camPosY, 5, 5);
+			graphics.drawOval(point.getCoordinates().getRoundX() - camPosX,
+					point.getCoordinates().getRoundY() - camPosY, 5, 5);
 		}
 		graphics.setColor(old);
 
@@ -207,19 +194,19 @@ public class MapCamera extends Entity implements Camera, ControllerListener {
 	}
 
 	public void moveLeft() {
-		this.position.x -= 20;
+		this.position.translate(-20, 0);
 	}
 
 	public void moveRight() {
-		this.position.x += 20;
+		this.position.translate(20, 0);
 	}
 
 	public void moveUp() {
-		this.position.y -= 20;
+		this.position.translate(0, -20);
 	}
 
 	public void moveDown() {
-		this.position.y += 20;
+		this.position.translate(0, 20);
 	}
 
 	@Override

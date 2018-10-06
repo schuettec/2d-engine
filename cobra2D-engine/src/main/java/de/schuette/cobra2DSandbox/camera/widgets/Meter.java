@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 import java.awt.RadialGradientPaint;
 import java.awt.geom.Point2D;
 import java.awt.image.VolatileImage;
@@ -93,10 +93,10 @@ public class Meter implements Serializable {
 					this.label);
 			final int stringHeight = graphics.getFontMetrics().getHeight();
 			final int strX = (int) Math
-					.round((this.position.x + (this.size.width / 2.0))
+					.round((this.position.getRoundX() + (this.size.width / 2.0))
 							- (stringWidth / 2.0));
 			final int strY = (int) Math
-					.round((this.position.y + (this.size.height / 2.0))
+					.round((this.position.getRoundY() + (this.size.height / 2.0))
 							- (stringHeight / 2.0));
 
 			final Font oldFont = graphics.getFont();
@@ -118,10 +118,10 @@ public class Meter implements Serializable {
 					.stringWidth(label);
 			final int stringHeight = graphics.getFontMetrics().getHeight();
 			final int strX = (int) Math
-					.round((this.position.x + (this.size.width / 2.0))
+					.round((this.position.getRoundX() + (this.size.width / 2.0))
 							- (stringWidth / 2.0));
 			final int strY = (int) Math
-					.round((this.position.y + (this.size.height / 2.0))
+					.round((this.position.getRoundY() + (this.size.height / 2.0))
 							- (stringHeight / 2.0));
 
 			graphics.setColor(Color.CYAN);

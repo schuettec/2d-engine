@@ -1,7 +1,6 @@
 package de.schuette.cobra2D.entity;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.image.VolatileImage;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,8 +13,10 @@ import de.schuette.cobra2D.entity.editing.Editable;
 import de.schuette.cobra2D.entity.editing.EditableProperty;
 import de.schuette.cobra2D.entity.editing.PointEditor;
 import de.schuette.cobra2D.entity.editing.StringEditor;
+import de.schuette.cobra2D.math.EntityPoint;
 import de.schuette.cobra2D.math.Line;
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 
 @Editable
@@ -53,17 +54,15 @@ public class Entity implements Serializable {
 	}
 
 	/**
-	 * This method is used to initialize an entity an engage it with an instance
-	 * of the engine. Feel free to overwrite this method for your
-	 * initializations. This method is used if some initializations depend on
-	 * the instance of the engine.
+	 * This method is used to initialize an entity an engage it with an instance of
+	 * the engine. Feel free to overwrite this method for your initializations. This
+	 * method is used if some initializations depend on the instance of the engine.
 	 * 
 	 * @param engine
 	 *            The engine, injected by the framework.
 	 * @throws EntityInitializeException
 	 */
-	public void initialize(final Cobra2DEngine engine)
-			throws EntityInitializeException {
+	public void initialize(final Cobra2DEngine engine) throws EntityInitializeException {
 		this.engine = engine;
 
 		if (this.textureKey != null) {
@@ -72,10 +71,9 @@ public class Entity implements Serializable {
 	}
 
 	/**
-	 * This method frees any ressources and disengages this entity from the
-	 * engine. Note: This method invalidates the instance of this entity. Be
-	 * sure that this reference is no longe used. A finished entity cannot be
-	 * reused!
+	 * This method frees any ressources and disengages this entity from the engine.
+	 * Note: This method invalidates the instance of this entity. Be sure that this
+	 * reference is no longe used. A finished entity cannot be reused!
 	 */
 	public void finish() {
 		this.pointList = null;
@@ -110,8 +108,8 @@ public class Entity implements Serializable {
 
 	/**
 	 * This method sets a texture for this entity. Note: This method is used to
-	 * define a texture before initializing the entity. To change the texture of
-	 * an initialized entity, use changeTexture(String)-Method.
+	 * define a texture before initializing the entity. To change the texture of an
+	 * initialized entity, use changeTexture(String)-Method.
 	 * 
 	 * @param textureKey
 	 */
@@ -120,12 +118,12 @@ public class Entity implements Serializable {
 	}
 
 	/**
-	 * This method loads a new texture from the texture memory of the engine.
-	 * This method recalculates the size of this entity if no size was specified
-	 * before. Note that this method can only be used on an entity that was
-	 * initialized before. Otherwise there will be errors while loading the
-	 * texture from a non existing engine. This method is mainly used WITHIN the
-	 * initialize()-Method to bind this entity to an engine's texture storage.
+	 * This method loads a new texture from the texture memory of the engine. This
+	 * method recalculates the size of this entity if no size was specified before.
+	 * Note that this method can only be used on an entity that was initialized
+	 * before. Otherwise there will be errors while loading the texture from a non
+	 * existing engine. This method is mainly used WITHIN the initialize()-Method to
+	 * bind this entity to an engine's texture storage.
 	 * 
 	 * @param textureKey
 	 *            The new texture to use.
@@ -150,15 +148,14 @@ public class Entity implements Serializable {
 	}
 
 	/**
-	 * This method is used to adjust the size of this entity by using the
-	 * dimensions of the texture. Note that this is only possible if the entity
-	 * was initialized and therefore has a texture.
+	 * This method is used to adjust the size of this entity by using the dimensions
+	 * of the texture. Note that this is only possible if the entity was initialized
+	 * and therefore has a texture.
 	 */
 	public void adjustSize() {
 		if (isLinkSizeToTexture()) {
 			if (this.image != null) {
-				this.setSize(new Dimension(this.image.getWidth(), this.image
-						.getHeight()));
+				this.setSize(new Dimension(this.image.getWidth(), this.image.getHeight()));
 			}
 		}
 	}
@@ -176,9 +173,8 @@ public class Entity implements Serializable {
 	}
 
 	/**
-	 * Sets the current texture of this entity. This method does not recalculate
-	 * the size of the object. The size is only adjusted if using
-	 * changeTexture();
+	 * Sets the current texture of this entity. This method does not recalculate the
+	 * size of the object. The size is only adjusted if using changeTexture();
 	 * 
 	 * @param image
 	 *            The image to set
@@ -241,8 +237,7 @@ public class Entity implements Serializable {
 	}
 
 	/**
-	 * @return Returns the list of lines calculated by the current entity
-	 *         points.
+	 * @return Returns the list of lines calculated by the current entity points.
 	 */
 	public List<Line> getLineList() {
 		final List<Line> lineList = new ArrayList<Line>();
@@ -252,21 +247,19 @@ public class Entity implements Serializable {
 		}
 
 		for (int i = 1; i < this.pointList.size(); i++) {
-			lineList.add(new Line(this.pointList.get(i).getCurrentPosition(),
-					this.pointList.get(i - 1).getCurrentPosition()));
+			lineList.add(new Line(this.pointList.get(i).getCoordinates(), this.pointList.get(i - 1).getCoordinates()));
 		}
 
-		lineList.add(new Line(this.pointList.get(0).getCurrentPosition(),
-				this.pointList.get(this.pointList.size() - 1)
-						.getCurrentPosition()));
+		lineList.add(new Line(this.pointList.get(0).getCoordinates(),
+				this.pointList.get(this.pointList.size() - 1).getCoordinates()));
 
 		return lineList;
 	}
 
 	/**
-	 * Recalculates the rotation of the entity points relative to the given
-	 * degrees. This method does not modify the degrees of the entity. Note: It
-	 * is recommended to use this method only for internal purposes.
+	 * Recalculates the rotation of the entity points relative to the given degrees.
+	 * This method does not modify the degrees of the entity. Note: It is
+	 * recommended to use this method only for internal purposes.
 	 * 
 	 * @param degrees
 	 *            The degrees of rotation of the entity points
@@ -293,8 +286,7 @@ public class Entity implements Serializable {
 	/**
 	 * @param entity
 	 *            Another entity
-	 * @return True if the other entity hits the rectangle enclosing this
-	 *         entity.
+	 * @return True if the other entity hits the rectangle enclosing this entity.
 	 */
 	public boolean isInMyRect(final Entity entity) {
 
@@ -304,7 +296,7 @@ public class Entity implements Serializable {
 
 		for (int i = 0; i < pointList.size(); i++) {
 			final EntityPoint point = pointList.get(i);
-			if (Math2D.isInRect(point.getCurrentPosition(), x1, x2)) {
+			if (Math2D.isInRect(point.getCoordinates(), x1, x2)) {
 				return true;
 			}
 		}
@@ -339,8 +331,8 @@ public class Entity implements Serializable {
 	 * @param entityList
 	 *            The list of entities to check.
 	 * @return Returns a list of collision objects. Every object specifies a
-	 *         collision with another entity only if there is currently a
-	 *         collision detectable.
+	 *         collision with another entity only if there is currently a collision
+	 *         detectable.
 	 */
 	public List<Collision> collisionWith(final List<?> entityList) {
 		// Wenn eine Gerade der Entity einen schnittpunkt mit einer Geraden
@@ -355,8 +347,7 @@ public class Entity implements Serializable {
 			try {
 				anEntity = (Entity) entityList.get(i);
 			} catch (final Exception e) {
-				throw new RuntimeException(
-						"Cannot analyse collision, because object is not an entity.");
+				throw new RuntimeException("Cannot analyse collision, because object is not an entity.");
 			}
 
 			if (anEntity == null) {
@@ -375,9 +366,8 @@ public class Entity implements Serializable {
 			for (final Line myLine : this.getLineList()) {
 				for (final Line l : lineList) {
 					Point schnittPunkt;
-					if ((schnittPunkt = myLine.schneidetLinie(l)) != null) {
-						entities.add(new Collision(anEntity, schnittPunkt, l,
-								myLine));
+					if ((schnittPunkt = myLine.intersects(l)) != null) {
+						entities.add(new Collision(anEntity, schnittPunkt, l, myLine));
 					}
 				}
 			}
@@ -407,8 +397,7 @@ public class Entity implements Serializable {
 			try {
 				anEntity = (Entity) entityList.get(i);
 			} catch (final Exception e) {
-				throw new RuntimeException(
-						"Cannot analyse collision, because object is not an entity.");
+				throw new RuntimeException("Cannot analyse collision, because object is not an entity.");
 			}
 
 			if (anEntity == null) {
@@ -420,7 +409,7 @@ public class Entity implements Serializable {
 			for (final Line myLine : this.getLineList()) {
 				for (final Line l : lineList) {
 					Point schnittPunkt;
-					if ((schnittPunkt = myLine.schneidetLinie(l)) != null) {
+					if ((schnittPunkt = myLine.intersects(l)) != null) {
 
 						return new Collision(anEntity, schnittPunkt, l, myLine);
 
@@ -448,8 +437,8 @@ public class Entity implements Serializable {
 	}
 
 	/**
-	 * Calculates the center point for this entity, based on the current
-	 * location and its dimension.
+	 * Calculates the center point for this entity, based on the current location
+	 * and its dimension.
 	 * 
 	 * @return The center point of this entity.
 	 */
@@ -457,9 +446,8 @@ public class Entity implements Serializable {
 		if (size == null) {
 			return new Point(this.getPosition().x, this.getPosition().y);
 		} else {
-			return new Point(this.getPosition().x
-					+ (int) (this.getSize().width / 2.0), this.getPosition().y
-					+ (int) (this.getSize().height / 2.0));
+			return new Point(this.getPosition().x + (int) (this.getSize().width / 2.0),
+					this.getPosition().y + (int) (this.getSize().height / 2.0));
 		}
 	}
 
@@ -475,20 +463,20 @@ public class Entity implements Serializable {
 		pointList.clear();
 
 		newPoint = new Point(1, 1);
-		pointList.add(new EntityPoint(Math2D.getAngle(eMiddle, newPoint),
-				(int) Math2D.getEntfernung(eMiddle, newPoint), this));
+		pointList.add(
+				new EntityPoint(Math2D.getAngle(eMiddle, newPoint), (int) Math2D.getEntfernung(eMiddle, newPoint)));
 
 		newPoint = new Point(this.getSize().width, 1);
-		pointList.add(new EntityPoint(Math2D.getAngle(eMiddle, newPoint),
-				(int) Math2D.getEntfernung(eMiddle, newPoint), this));
+		pointList.add(
+				new EntityPoint(Math2D.getAngle(eMiddle, newPoint), (int) Math2D.getEntfernung(eMiddle, newPoint)));
 
 		newPoint = new Point(this.getSize().width, this.getSize().height);
-		pointList.add(new EntityPoint(Math2D.getAngle(eMiddle, newPoint),
-				(int) Math2D.getEntfernung(eMiddle, newPoint), this));
+		pointList.add(
+				new EntityPoint(Math2D.getAngle(eMiddle, newPoint), (int) Math2D.getEntfernung(eMiddle, newPoint)));
 
 		newPoint = new Point(1, this.getSize().height);
-		pointList.add(new EntityPoint(Math2D.getAngle(eMiddle, newPoint),
-				(int) Math2D.getEntfernung(eMiddle, newPoint), this));
+		pointList.add(
+				new EntityPoint(Math2D.getAngle(eMiddle, newPoint), (int) Math2D.getEntfernung(eMiddle, newPoint)));
 
 		resetPoints();
 	}
@@ -507,33 +495,33 @@ public class Entity implements Serializable {
 		Point newPoint = new Point(-widthHalf, -heightHalf);
 		double distance = Math2D.getEntfernung(center, newPoint);
 		double angle = Math2D.getAngle(center, newPoint);
-		pointList.add(new EntityPoint(angle, Math2D.saveRound(distance), this));
+		pointList.add(new EntityPoint(angle, Math2D.saveRound(distance)));
 
 		newPoint = new Point(+widthHalf, -heightHalf);
 		distance = Math2D.getEntfernung(center, newPoint);
 		angle = Math2D.getAngle(center, newPoint);
-		pointList.add(new EntityPoint(angle, Math2D.saveRound(distance), this));
+		pointList.add(new EntityPoint(angle, Math2D.saveRound(distance)));
 
 		newPoint = new Point(+widthHalf, +heightHalf);
 		distance = Math2D.getEntfernung(center, newPoint);
 		angle = Math2D.getAngle(center, newPoint);
-		pointList.add(new EntityPoint(angle, Math2D.saveRound(distance), this));
+		pointList.add(new EntityPoint(angle, Math2D.saveRound(distance)));
 
 		newPoint = new Point(-widthHalf, +heightHalf);
 		distance = Math2D.getEntfernung(center, newPoint);
 		angle = Math2D.getAngle(center, newPoint);
-		pointList.add(new EntityPoint(angle, Math2D.saveRound(distance), this));
+		pointList.add(new EntityPoint(angle, Math2D.saveRound(distance)));
 
 		resetPoints();
 
 	}
 
 	/**
-	 * Creates one entity point and adds it to this entity. The entity point is
-	 * the center point of this entity.
+	 * Creates one entity point and adds it to this entity. The entity point is the
+	 * center point of this entity.
 	 */
 	public void createMiddleEntityPoint() {
-		pointList.add(new EntityPoint(0, 0, this));
+		pointList.add(new EntityPoint(0, 0));
 		resetPoints();
 
 	}
@@ -549,7 +537,7 @@ public class Entity implements Serializable {
 
 		for (final Line myLine : this.getLineList()) {
 			Point schnittPunkt;
-			if ((schnittPunkt = myLine.schneidetLinie(line)) != null) {
+			if ((schnittPunkt = myLine.intersects(line)) != null) {
 				return new Collision(this, schnittPunkt, line, myLine);
 			}
 
@@ -569,7 +557,7 @@ public class Entity implements Serializable {
 		for (final Line myLine : this.getLineList()) {
 			for (final Line line : entity.getLineList()) {
 				Point schnittPunkt;
-				if ((schnittPunkt = myLine.schneidetLinie(line)) != null) {
+				if ((schnittPunkt = myLine.intersects(line)) != null) {
 					return new Collision(entity, schnittPunkt, line, myLine);
 				}
 			}
@@ -584,16 +572,11 @@ public class Entity implements Serializable {
 		long temp;
 		temp = Double.doubleToLongBits(this.degrees);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result
-				+ ((this.entityName == null) ? 0 : this.entityName.hashCode());
-		result = prime * result
-				+ ((this.pointList == null) ? 0 : this.pointList.hashCode());
-		result = prime * result
-				+ ((this.position == null) ? 0 : this.position.hashCode());
-		result = prime * result
-				+ ((this.size == null) ? 0 : this.size.hashCode());
-		result = prime * result
-				+ ((this.textureKey == null) ? 0 : this.textureKey.hashCode());
+		result = prime * result + ((this.entityName == null) ? 0 : this.entityName.hashCode());
+		result = prime * result + ((this.pointList == null) ? 0 : this.pointList.hashCode());
+		result = prime * result + ((this.position == null) ? 0 : this.position.hashCode());
+		result = prime * result + ((this.size == null) ? 0 : this.size.hashCode());
+		result = prime * result + ((this.textureKey == null) ? 0 : this.textureKey.hashCode());
 		return result;
 	}
 
@@ -609,8 +592,7 @@ public class Entity implements Serializable {
 			return false;
 		}
 		final Entity other = (Entity) obj;
-		if (Double.doubleToLongBits(this.degrees) != Double
-				.doubleToLongBits(other.degrees)) {
+		if (Double.doubleToLongBits(this.degrees) != Double.doubleToLongBits(other.degrees)) {
 			return false;
 		}
 		if (this.entityName == null) {

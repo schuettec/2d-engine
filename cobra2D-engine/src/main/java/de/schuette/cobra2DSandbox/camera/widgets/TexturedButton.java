@@ -1,7 +1,7 @@
 package de.schuette.cobra2DSandbox.camera.widgets;
 
 import java.awt.Dimension;
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;

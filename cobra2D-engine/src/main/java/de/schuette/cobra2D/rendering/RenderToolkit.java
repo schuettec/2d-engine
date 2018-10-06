@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
@@ -23,15 +22,14 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 
 public class RenderToolkit {
 	private static GraphicsConfiguration gConfig;
 
 	static {
-		final GraphicsEnvironment ge = GraphicsEnvironment
-				.getLocalGraphicsEnvironment();
-		RenderToolkit.gConfig = ge.getDefaultScreenDevice()
-				.getDefaultConfiguration();
+		final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		RenderToolkit.gConfig = ge.getDefaultScreenDevice().getDefaultConfiguration();
 
 	}
 
@@ -39,8 +37,7 @@ public class RenderToolkit {
 	 * 
 	 * NEW!!!
 	 */
-	public static void renderTo(float alpha, double degrees,
-			final Point position, final Dimension size,
+	public static void renderTo(float alpha, double degrees, final Point position, final Dimension size,
 			final Graphics2D graphics, final VolatileImage image) {
 
 		// TRANSPARENT DRAWING
@@ -59,8 +56,7 @@ public class RenderToolkit {
 		}
 	}
 
-	public static void renderTo(double degrees, final Point position,
-			final Dimension size, final Graphics2D graphics,
+	public static void renderTo(double degrees, final Point position, final Dimension size, final Graphics2D graphics,
 			final VolatileImage image) {
 		// ROTATION
 		AffineTransform oldTransform = null;
@@ -68,9 +64,8 @@ public class RenderToolkit {
 		if (degrees != 0.0d) {
 			oldTransform = graphics.getTransform();
 			rotateTransform = new AffineTransform();
-			rotateTransform.rotate(Math.toRadians(degrees),
-					position.x + Math2D.saveRound(size.getWidth() / 2.0),
-					position.y + Math2D.saveRound(size.getHeight() / 2.0));
+			rotateTransform.rotate(Math.toRadians(degrees), position.getRoundX() + Math2D.saveRound(size.getWidth() / 2.0),
+					position.getRoundY() + Math2D.saveRound(size.getHeight() / 2.0));
 			graphics.setTransform(rotateTransform);
 		}
 
@@ -83,8 +78,8 @@ public class RenderToolkit {
 
 	}
 
-	public static void renderTo(final Point position, final Dimension size,
-			final Graphics2D graphics, final VolatileImage image) {
+	public static void renderTo(final Point position, final Dimension size, final Graphics2D graphics,
+			final VolatileImage image) {
 
 		// RESIZED DRAWING
 		if (size.width == image.getWidth() && size.height == image.getHeight()) {
@@ -92,15 +87,13 @@ public class RenderToolkit {
 			renderTo(position, graphics, image);
 		} else {
 			// Draw resized
-			graphics.drawImage(image, position.x, position.y, position.x
-					+ size.width, position.y + size.height, 0, 0,
-					image.getWidth(), image.getHeight(), null);
+			graphics.drawImage(image, position.getRoundX(), position.getRoundY(), position.getRoundX() + size.width,
+					position.getRoundY() + size.height, 0, 0, image.getWidth(), image.getHeight(), null);
 		}
 	}
 
-	public static void renderTo(float alpha, double degrees, int blurredFactor,
-			final Point position, final Graphics2D graphics,
-			final VolatileImage image) {
+	public static void renderTo(float alpha, double degrees, int blurredFactor, final Point position,
+			final Graphics2D graphics, final VolatileImage image) {
 		// TRANSPARENT DRAWING
 		AlphaComposite alphaC = null;
 		if (alpha != 1f) {
@@ -117,8 +110,7 @@ public class RenderToolkit {
 		}
 	}
 
-	public static void renderTo(double degrees, int blurredFactor,
-			final Point position, final Graphics2D graphics,
+	public static void renderTo(double degrees, int blurredFactor, final Point position, final Graphics2D graphics,
 			final VolatileImage image) {
 		// ROTATION
 		AffineTransform oldTransform = null;
@@ -126,9 +118,8 @@ public class RenderToolkit {
 		if (degrees != 0.0d) {
 			oldTransform = graphics.getTransform();
 			rotateTransform = new AffineTransform();
-			rotateTransform.rotate(Math.toRadians(degrees),
-					position.x + (image.getWidth() / 2),
-					position.y + (image.getHeight() / 2));
+			rotateTransform.rotate(Math.toRadians(degrees), position.getRoundX() + (image.getWidth() / 2),
+					position.getRoundY() + (image.getHeight() / 2));
 			graphics.setTransform(rotateTransform);
 		}
 
@@ -140,25 +131,22 @@ public class RenderToolkit {
 		}
 	}
 
-	public static void renderTo(int blurredFactor, final Point position,
-			final Graphics2D graphics, final VolatileImage image) {
+	public static void renderTo(int blurredFactor, final Point position, final Graphics2D graphics,
+			final VolatileImage image) {
 		if (blurredFactor != 0) {
 			final GaussianFilter blurringOp = new GaussianFilter(blurredFactor);
-			graphics.drawImage(image.getSnapshot(), blurringOp, position.x,
-					position.y);
+			graphics.drawImage(image.getSnapshot(), blurringOp, position.getRoundX(), position.getRoundY());
 		} else {
 			renderTo(position, graphics, image);
 		}
 
 	}
 
-	public static void renderTo(final Point position,
-			final Graphics2D graphics, final VolatileImage image) {
+	public static void renderTo(final Point position, final Graphics2D graphics, final VolatileImage image) {
 
 		// Draw not resized
-		graphics.drawImage(image, position.x, position.y,
-				position.x + image.getWidth(), position.y + image.getHeight(),
-				0, 0, image.getWidth(), image.getHeight(), null);
+		graphics.drawImage(image, position.getRoundX(), position.getRoundY(), position.getRoundX() + image.getWidth(),
+				position.getRoundY() + image.getHeight(), 0, 0, image.getWidth(), image.getHeight(), null);
 	}
 
 	/*
@@ -169,16 +157,13 @@ public class RenderToolkit {
 		return Color.getHSBColor(Math.min(hue / 360.0f, 1f), 1f, 1f);
 	}
 
-	public static VolatileImage createVolatileImage(final int width,
-			final int height) {
-		return RenderToolkit.gConfig.createCompatibleVolatileImage(width,
-				height, Transparency.TRANSLUCENT);
+	public static VolatileImage createVolatileImage(final int width, final int height) {
+		return RenderToolkit.gConfig.createCompatibleVolatileImage(width, height, Transparency.TRANSLUCENT);
 
 	}
 
 	public static VolatileImage copyImage(final VolatileImage img) {
-		final VolatileImage newImg = RenderToolkit.createVolatileImage(
-				img.getWidth(), img.getHeight());
+		final VolatileImage newImg = RenderToolkit.createVolatileImage(img.getWidth(), img.getHeight());
 		final Graphics2D g = (Graphics2D) newImg.getGraphics();
 
 		RenderToolkit.renderTo(new Point(0, 0), g, img);
@@ -225,7 +210,7 @@ public class RenderToolkit {
 	// graphics.setComposite(alpha);
 	//
 	// final GaussianFilter blurringOp = new GaussianFilter(blurredFactor);
-	// graphics.drawImage(imgIn, blurringOp, position.x, position.y);
+	// graphics.drawImage(imgIn, blurringOp, position.getRoundX(), position.getRoundY());
 	//
 	// alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 	// graphics.setComposite(alpha);
@@ -301,8 +286,8 @@ public class RenderToolkit {
 	// if (image == null) {
 	// return;
 	// }
-	// graphics.drawImage(image, position.x, position.y,
-	// position.x + image.getWidth(), position.y + image.getHeight(),
+	// graphics.drawImage(image, position.getRoundX(), position.getRoundY(),
+	// position.getRoundX() + image.getWidth(), position.getRoundY() + image.getHeight(),
 	// 0, 0, image.getWidth(), image.getHeight(), null);
 	//
 	// }
@@ -312,8 +297,8 @@ public class RenderToolkit {
 	// if (src == null) {
 	// return;
 	// }
-	// graphics.drawImage(src, position.x, position.y,
-	// position.x + src.getWidth(), position.y + src.getHeight(), 0,
+	// graphics.drawImage(src, position.getRoundX(), position.getRoundY(),
+	// position.getRoundX() + src.getWidth(), position.getRoundY() + src.getHeight(), 0,
 	// 0, src.getWidth(), src.getHeight(), null);
 	//
 	// }
@@ -340,8 +325,8 @@ public class RenderToolkit {
 	// return;
 	// }
 	//
-	// graphics.drawImage(image, position.x, position.y, position.x
-	// + size.width, position.y + size.height, 0, 0, image.getWidth(),
+	// graphics.drawImage(image, position.getRoundX(), position.getRoundY(), position.getRoundX()
+	// + size.width, position.getRoundY() + size.height, 0, 0, image.getWidth(),
 	// image.getHeight(), null);
 	//
 	// }
@@ -359,8 +344,8 @@ public class RenderToolkit {
 	// AlphaComposite alphaC = AlphaComposite.getInstance(
 	// AlphaComposite.SRC_OVER, alpha);
 	// graphics.setComposite(alphaC);
-	// graphics.drawImage(src, position.x, position.y,
-	// position.x + src.getWidth(), position.y + src.getHeight(), 0,
+	// graphics.drawImage(src, position.getRoundX(), position.getRoundY(),
+	// position.getRoundX() + src.getWidth(), position.getRoundY() + src.getHeight(), 0,
 	// 0, src.getWidth(), src.getHeight(), null);
 	// alphaC = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 	// graphics.setComposite(alphaC);
@@ -372,8 +357,8 @@ public class RenderToolkit {
 	// AlphaComposite alphaC = AlphaComposite.getInstance(
 	// AlphaComposite.SRC_OVER, alpha);
 	// graphics.setComposite(alphaC);
-	// graphics.drawImage(src, position.x, position.y,
-	// position.x + size.width, position.y + size.height, 0, 0,
+	// graphics.drawImage(src, position.getRoundX(), position.getRoundY(),
+	// position.getRoundX() + size.width, position.getRoundY() + size.height, 0, 0,
 	// src.getWidth(), src.getHeight(), null);
 	// alphaC = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 	// graphics.setComposite(alphaC);
@@ -389,8 +374,8 @@ public class RenderToolkit {
 	// AlphaComposite.SRC_OVER, alpha);
 	// graphics.setComposite(alphaC);
 
-	// graphics.drawImage(src, position.x, position.y,
-	// position.x + src.getWidth(), position.y + src.getHeight(), 0,
+	// graphics.drawImage(src, position.getRoundX(), position.getRoundY(),
+	// position.getRoundX() + src.getWidth(), position.getRoundY() + src.getHeight(), 0,
 	// 0, src.getWidth(), src.getHeight(), null);
 
 	// alphaC = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
@@ -403,8 +388,8 @@ public class RenderToolkit {
 	// AlphaComposite alphaC = AlphaComposite.getInstance(
 	// AlphaComposite.SRC_OVER, alpha);
 	// graphics.setComposite(alphaC);
-	// graphics.drawImage(src, position.x, position.y,
-	// position.x + size.width, position.y + size.height, 0, 0,
+	// graphics.drawImage(src, position.getRoundX(), position.getRoundY(),
+	// position.getRoundX() + size.width, position.getRoundY() + size.height, 0, 0,
 	// src.getWidth(), src.getHeight(), null);
 	// alphaC = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 	// graphics.setComposite(alphaC);
@@ -416,8 +401,7 @@ public class RenderToolkit {
 		try {
 			src = ImageIO.read(imageFile);
 		} catch (final IOException e) {
-			throw new RuntimeException("Cannot load image "
-					+ imageFile.getAbsolutePath());
+			throw new RuntimeException("Cannot load image " + imageFile.getAbsolutePath());
 		}
 		return copyImage(src);
 	}
@@ -444,27 +428,23 @@ public class RenderToolkit {
 
 	public static VolatileImage copyImage(Image src) {
 
-		final VolatileImage image = RenderToolkit.createVolatileImage(
-				src.getWidth(null), src.getHeight(null));
+		final VolatileImage image = RenderToolkit.createVolatileImage(src.getWidth(null), src.getHeight(null));
 		image.validate(RenderToolkit.gConfig);
 
 		image.getGraphics().drawImage(src, 0, 0, null);
 		return image;
 	}
 
-	public static VolatileImage convertSpriteToTransparentSprite(
-			final VolatileImage src, final RGBImageFilter rgbFilter) {
+	public static VolatileImage convertSpriteToTransparentSprite(final VolatileImage src,
+			final RGBImageFilter rgbFilter) {
 
-		final ImageProducer imageprod = new FilteredImageSource(
-				src.getSource(), rgbFilter);
-		final Image transparentImage = Toolkit.getDefaultToolkit().createImage(
-				imageprod);
+		final ImageProducer imageprod = new FilteredImageSource(src.getSource(), rgbFilter);
+		final Image transparentImage = Toolkit.getDefaultToolkit().createImage(imageprod);
 		// BufferedImage image = new
 		// BufferedImage(src.getWidth(null),src.getHeight(null),
 		// BufferedImage.TYPE_INT_ARGB);
 
-		final VolatileImage image = RenderToolkit.createVolatileImage(
-				src.getWidth(null), src.getHeight(null));
+		final VolatileImage image = RenderToolkit.createVolatileImage(src.getWidth(null), src.getHeight(null));
 		image.validate(RenderToolkit.gConfig);
 
 		final Graphics2D g = image.createGraphics();
@@ -527,10 +507,8 @@ public class RenderToolkit {
 	// return image;
 	// }
 
-	public static VolatileImage resize(final VolatileImage src,
-			final Dimension newSize) {
-		final VolatileImage image = RenderToolkit.createVolatileImage(
-				newSize.width, newSize.height);
+	public static VolatileImage resize(final VolatileImage src, final Dimension newSize) {
+		final VolatileImage image = RenderToolkit.createVolatileImage(newSize.width, newSize.height);
 		final Graphics2D graphics = image.createGraphics();
 		RenderToolkit.renderTo(new Point(0, 0), newSize, graphics, src);
 		graphics.dispose();
@@ -538,10 +516,8 @@ public class RenderToolkit {
 	}
 
 	public static int getHue(final Color transparencyColor) {
-		final float[] hsbSrc = Color
-				.RGBtoHSB(transparencyColor.getRed(),
-						transparencyColor.getGreen(),
-						transparencyColor.getBlue(), null);
+		final float[] hsbSrc = Color.RGBtoHSB(transparencyColor.getRed(), transparencyColor.getGreen(),
+				transparencyColor.getBlue(), null);
 		return Math2D.saveRound(hsbSrc[0] * 360);
 	}
 
@@ -561,18 +537,16 @@ public class RenderToolkit {
 	 *         magenta (fully transluent).
 	 */
 	public static GradientTransparencyFilter getDefaultGradientFilter() {
-		final GradientTransparencyFilter filter = new GradientTransparencyFilter(
-				Color.BLACK, Color.MAGENTA);
+		final GradientTransparencyFilter filter = new GradientTransparencyFilter(Color.BLACK, Color.MAGENTA);
 		return filter;
 	}
 
 	/**
-	 * @return Returns the default hue-brightness filter with a hue value of 300
-	 *         and a brightness of 0.3f.
+	 * @return Returns the default hue-brightness filter with a hue value of 300 and
+	 *         a brightness of 0.3f.
 	 */
 	public static HueBrightnessTransparencyFilter getDefaultHueBrightnessFilter() {
-		final HueBrightnessTransparencyFilter filter = new HueBrightnessTransparencyFilter(
-				300, 0.3f);
+		final HueBrightnessTransparencyFilter filter = new HueBrightnessTransparencyFilter(300, 0.3f);
 		return filter;
 	}
 

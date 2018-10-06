@@ -3,7 +3,6 @@ package de.schuette.cobra2DSandbox.camera.widgets;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -16,11 +15,11 @@ import java.util.List;
 
 import de.schuette.cobra2D.controller.ControllerListener;
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.rendering.RenderToolkit;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 
-public class ButtonController implements ControllerListener, MouseListener,
-		MouseMotionListener {
+public class ButtonController implements ControllerListener, MouseListener, MouseMotionListener {
 
 	public enum ButtonLayout {
 		HORIZONTAL, VERTICAL;
@@ -41,13 +40,12 @@ public class ButtonController implements ControllerListener, MouseListener,
 
 	private final Cobra2DEngine engine;
 
-	public ButtonController(final Cobra2DEngine engine,
-			final ButtonLayout layout) {
+	public ButtonController(final Cobra2DEngine engine, final ButtonLayout layout) {
 		this(engine, layout, 0, Color.BLACK);
 	}
 
-	public ButtonController(final Cobra2DEngine engine,
-			final ButtonLayout layout, final int spacing, final Color background) {
+	public ButtonController(final Cobra2DEngine engine, final ButtonLayout layout, final int spacing,
+			final Color background) {
 		this.layout = layout;
 		this.spacing = spacing;
 		this.background = background;
@@ -166,8 +164,7 @@ public class ButtonController implements ControllerListener, MouseListener,
 				final BufferedImage buttonImage = button.render();
 				final int mX = (width - button.getSize().width) / 2;
 				g.drawImage(buttonImage, mX, lastHeight, null);
-				button.setPosition(new Point(mX + position.x, lastHeight
-						+ position.y));
+				button.setPosition(new Point(mX + position.getRoundX(), lastHeight + position.getRoundY()));
 				lastHeight += button.getSize().height + this.spacing;
 
 			}
@@ -183,7 +180,7 @@ public class ButtonController implements ControllerListener, MouseListener,
 				final Button button = this.buttons.get(i);
 				final BufferedImage buttonImage = button.render();
 				g.drawImage(buttonImage, lastWidth, 0, null);
-				button.setPosition(new Point(lastWidth + position.x, position.y));
+				button.setPosition(new Point(lastWidth + position.getRoundX(), position.getRoundY()));
 				lastWidth += button.getSize().width + this.spacing;
 
 			}
@@ -253,8 +250,7 @@ public class ButtonController implements ControllerListener, MouseListener,
 			if (button == null) {
 				return;
 			}
-			button.performAction(new ActionEvent(this.getActiveButton(),
-					this.activeButton, "buttonClicked"));
+			button.performAction(new ActionEvent(this.getActiveButton(), this.activeButton, "buttonClicked"));
 		}
 
 	}
@@ -277,8 +273,7 @@ public class ButtonController implements ControllerListener, MouseListener,
 		if (button == null) {
 			return;
 		}
-		button.performAction(new ActionEvent(this.getActiveButton(),
-				this.activeButton, "buttonClicked"));
+		button.performAction(new ActionEvent(this.getActiveButton(), this.activeButton, "buttonClicked"));
 
 	}
 
@@ -297,10 +292,9 @@ public class ButtonController implements ControllerListener, MouseListener,
 				continue;
 			}
 			final Point a = button.getPosition();
-			final Point b = new Point(button.getPosition().x
-					+ button.getSize().width, button.getPosition().y
-					+ button.getSize().height);
-			if (Math2D.isInRect(e.getPoint(), a, b)) {
+			final Point b = new Point(button.getPosition().x + button.getSize().width,
+					button.getPosition().y + button.getSize().height);
+			if (Math2D.isInRect(Point.ofAWT(e.getPoint()), a, b)) {
 				this.activateButton(button);
 			} else {
 

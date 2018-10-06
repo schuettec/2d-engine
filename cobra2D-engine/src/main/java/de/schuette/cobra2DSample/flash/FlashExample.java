@@ -1,6 +1,6 @@
 package de.schuette.cobra2DSample.flash;
 
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.net.URL;
@@ -83,7 +83,7 @@ public class FlashExample implements MouseMotionListener {
 
 	@Override
 	public void mouseMoved(final MouseEvent e) {
-		this.flash.setEnd(e.getPoint());
+		this.flash.setEnd(new Point(e.getPoint().x, e.getPoint().y));
 	}
 
 	public static void main(final String... args) throws Exception {

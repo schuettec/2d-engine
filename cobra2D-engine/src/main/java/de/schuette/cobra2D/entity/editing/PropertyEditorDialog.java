@@ -2,7 +2,6 @@ package de.schuette.cobra2D.entity.editing;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
@@ -20,6 +19,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 
 public class PropertyEditorDialog extends JDialog {
 
@@ -65,8 +65,7 @@ public class PropertyEditorDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public PropertyEditorDialog(String windowTitle,
-			PropertyEditor editorComponent) {
+	public PropertyEditorDialog(String windowTitle, PropertyEditor editorComponent) {
 		this.editorComponent = editorComponent;
 		setTitle(windowTitle);
 		setModal(true);
@@ -82,13 +81,10 @@ public class PropertyEditorDialog extends JDialog {
 				JButton okayButton = new JButton(okAction);
 
 				// configure the Action with the accelerator (aka: short cut)
-				okAction.putValue(Action.ACCELERATOR_KEY,
-						KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+				okAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
 
-				InputMap inputMap = okayButton
-						.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-				inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-						okAction);
+				InputMap inputMap = okayButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+				inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), okAction);
 				ActionMap actionMap = okayButton.getActionMap();
 				actionMap.put(okAction, okAction);
 
@@ -99,13 +95,10 @@ public class PropertyEditorDialog extends JDialog {
 				JButton cancelButton = new JButton(cancelAction);
 
 				// configure the Action with the accelerator (aka: short cut)
-				cancelAction.putValue(Action.ACCELERATOR_KEY,
-						KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
+				cancelAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
 
-				InputMap inputMap = cancelButton
-						.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-				inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-						cancelAction);
+				InputMap inputMap = cancelButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+				inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelAction);
 				ActionMap actionMap = cancelButton.getActionMap();
 				actionMap.put(cancelAction, cancelAction);
 
@@ -154,9 +147,8 @@ public class PropertyEditorDialog extends JDialog {
 			}
 		});
 
-		Point centerOfScreen = Math2D
-				.getCenterOfScreen(getWidth(), getHeight());
-		this.setLocation(centerOfScreen);
+		Point centerOfScreen = Math2D.getCenterOfScreen(getWidth(), getHeight());
+		this.setLocation(centerOfScreen.toAwtPoint());
 		this.setVisible(true);
 
 	}
@@ -167,8 +159,7 @@ public class PropertyEditorDialog extends JDialog {
 			contentPanel.add(editorComponent);
 			contentPanel.validate();
 		} else {
-			throw new IllegalArgumentException(
-					"Editor component cannot be null.");
+			throw new IllegalArgumentException("Editor component cannot be null.");
 		}
 	}
 

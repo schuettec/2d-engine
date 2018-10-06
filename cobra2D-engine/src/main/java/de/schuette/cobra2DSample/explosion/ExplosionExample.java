@@ -1,7 +1,7 @@
 package de.schuette.cobra2DSample.explosion;
 
 import java.awt.Dimension;
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 import java.net.URL;
 import java.util.Properties;
 

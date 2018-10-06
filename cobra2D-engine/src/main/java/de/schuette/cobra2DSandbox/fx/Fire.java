@@ -2,7 +2,7 @@ package de.schuette.cobra2DSandbox.fx;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 
 import de.schuette.cobra2D.entity.Entity;
 import de.schuette.cobra2D.entity.EntityInitializeException;

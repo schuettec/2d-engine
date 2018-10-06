@@ -1,7 +1,7 @@
 package de.schuette.cobra2D.entity.skills;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 import java.io.Serializable;
 
 public interface Renderable extends Serializable {

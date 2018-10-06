@@ -1,14 +1,12 @@
 package de.schuette.cobra2D.math;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
 import de.schuette.cobra2D.entity.Entity;
-import de.schuette.cobra2D.entity.EntityPoint;
 
 public class Math2D {
 
@@ -20,24 +18,10 @@ public class Math2D {
 	 * @return Returns the middlepoint in the picture
 	 */
 	public static Point getMiddlepoint(final BufferedImage image) {
-		final int middleX = Math2D.saveRound(image.getWidth() / 2.0);
-		final int middleY = Math2D.saveRound(image.getHeight() / 2.0);
+		final double middleX = image.getWidth() / 2.0;
+		final double middleY = image.getHeight() / 2.0;
 		final Point middleInPicture = new Point(middleX, middleY);
 		return middleInPicture;
-	}
-
-	/**
-	 * Calculates a random number between min an max (included).
-	 * 
-	 * @param min
-	 * @param max
-	 * @return The random number in the given range.
-	 */
-	public static int random(int min, int max) {
-		final int h = min;
-		min = Math.min(min, max);
-		max = Math.max(h, max);
-		return (int) (Math.random() * (max - min + 1) + min);
 	}
 
 	/**
@@ -54,15 +38,15 @@ public class Math2D {
 		return (Math.random() * (max - min + 1) + min);
 	}
 
-	/**
-	 * Shorter command for (int) Math.round(value);
-	 * 
-	 * @param value
-	 * @return Returns the rounded int of the value.
-	 */
-	public static int saveRound(final float value) {
-		return Math.round(value);
-	}
+	// /**
+	// * Shorter command for (int) Math.round(value);
+	// *
+	// * @param value
+	// * @return Returns the rounded int of the value.
+	// */
+	// public static int saveRound(final float value) {
+	// return Math.round(value);
+	// }
 
 	/**
 	 * Shorter command for (int) Math.round(value);
@@ -75,8 +59,7 @@ public class Math2D {
 	}
 
 	/**
-	 * Calculates real world coordinates into relative coordinates in a
-	 * viewport.
+	 * Calculates real world coordinates into relative coordinates in a viewport.
 	 * 
 	 * @param realWorld
 	 *            Real world coordinates.
@@ -84,15 +67,13 @@ public class Math2D {
 	 *            Viewport coordinates.
 	 * @return
 	 */
-	public static Point getRelativePointTranslation(final Entity entity,
-			final Rectangle viewport) {
-		return Math2D.getRelativePointTranslation(entity.getPosition(),
-				viewport);
+	public static Point getRelativePointTranslation(final Point realWorld, final Rectangle viewport) {
+		final Point renderPos = new Point(realWorld.x - viewport.x, realWorld.y - viewport.y);
+		return renderPos;
 	}
 
 	/**
-	 * Calculates real world coordinates into relative coordinates in a
-	 * viewport.
+	 * Calculates real world coordinates into relative coordinates in a viewport.
 	 * 
 	 * @param realWorld
 	 *            Real world coordinates.
@@ -100,11 +81,8 @@ public class Math2D {
 	 *            Viewport coordinates.
 	 * @return
 	 */
-	public static Point getRelativePointTranslation(final Point realWorld,
-			final Rectangle viewport) {
-		final Point renderPos = new Point(realWorld.x - viewport.x, realWorld.y
-				- viewport.y);
-		return renderPos;
+	public static Point getRelativePointTranslation(final Entity entity, final Rectangle viewport) {
+		return Math2D.getRelativePointTranslation(entity.getPosition(), viewport);
 	}
 
 	// public static int getDirection(double yourDegrees, double wantedDegrees)
@@ -123,22 +101,20 @@ public class Math2D {
 	// return sign;
 	// }
 
-	public static Point getCenterOfScreen(final int width, final int height) {
+	public static Point getCenterOfScreen(final double width, final double height) {
 
-		final int sx = Toolkit.getDefaultToolkit().getScreenSize().width;
-		final int sy = Toolkit.getDefaultToolkit().getScreenSize().height;
+		final double sx = Toolkit.getDefaultToolkit().getScreenSize().width;
+		final double sy = Toolkit.getDefaultToolkit().getScreenSize().height;
 		return new Point((sx - width) / 2, (sy - height) / 2);
 	}
 
 	public static Point getMittelpunkt(final Point start, final Point ende) {
-		return new Point((start.x + ende.x) / 2, (start.y + ende.y) / 2);
+		return new Point((start.x + ende.x) / 2.0d, (start.y + ende.y) / 2.0d);
 	}
 
-	public static boolean isInCircle(final Point point, final Point mcircle,
-			final int radius) {
+	public static boolean isInCircle(final Point point, final Point mcircle, final double radius) {
 
-		if (Math.pow(point.x - mcircle.x, 2.0)
-				+ Math.pow(point.y - mcircle.y, 2.0) <= Math.pow(radius, 2)) {
+		if (Math.pow(point.x - mcircle.x, 2.0d) + Math.pow(point.y - mcircle.y, 2.0d) <= Math.pow(radius, 2)) {
 			return true;
 		} else {
 			return false;
@@ -147,8 +123,7 @@ public class Math2D {
 
 	public static boolean isInRect(final Point point, Point rectX1, Point rectX2) {
 
-		if ((point.x >= rectX1.x && point.x <= rectX2.x)
-				&& (point.y >= rectX1.y && point.y <= rectX2.y)) {
+		if ((point.x >= rectX1.x && point.x <= rectX2.x) && (point.y >= rectX1.y && point.y <= rectX2.y)) {
 			return true;
 		}
 
@@ -156,8 +131,7 @@ public class Math2D {
 		rectX1 = rectX2;
 		rectX2 = tmp;
 
-		if ((point.x >= rectX1.x && point.x <= rectX2.x)
-				&& (point.y >= rectX1.y && point.y <= rectX2.y)) {
+		if ((point.x >= rectX1.x && point.x <= rectX2.x) && (point.y >= rectX1.y && point.y <= rectX2.y)) {
 			return true;
 		}
 
@@ -167,56 +141,52 @@ public class Math2D {
 	public static double getSteigung(final Point start, final Point ende) {
 
 		double result;
-		result = (double) (ende.y - start.y) / (double) (ende.x - start.x);
+		result = (ende.y - start.y) / (ende.x - start.x);
 		return result;
 	}
 
-	public static Point getCircle(final Point start, final double radius,
-			final double winkel) {
+	public static Point getCircle(final Point start, final double radius, final double winkel) {
 		// winkel -= 90;
 
-		final double w = winkel * (Math.PI / 180);
+		final double w = winkel * (Math.PI / 180.d);
 
 		final double x = (start.getX() + (Math.cos(w) * radius));
 		final double y = (start.getY() + (Math.sin(w) * radius));
 
-		return new Point((int) Math.round(x), (int) Math.round(y));
+		return new Point(x, y);
 
 	}
 
-	public static int getAngle(final Point start, final Point end) {
-		// * 100 f�r die genauigkeit
-		double w = (Math.atan2((end.y * 100 - start.y * 100),
-				(end.x * 100 - start.x * 100))) * (180 / Math.PI);
+	public static double getAngle(final Point start, final Point end) {
+
+		double w = (Math.atan2((end.y - start.y), (end.x - start.x))) * (180.d / Math.PI);
 
 		// w = w + 90;
-		if (w <= 0) {
-			w = 360 + w;
+		if (w <= 0.0) {
+			w = 360.0 + w;
 		}
 
 		// //BEDENKLICH
-		if (w >= 360) {
-			w = w - 360;
+		if (w >= 360.0) {
+			w = w - 360.0;
 		}
 
-		return (int) Math.round(w);
+		return w;
 
 	}
 
 	public static double getEntfernung(final Point start, final Point ende) {
-		final double e = Math.sqrt(Math.pow((start.x - ende.x), 2)
-				+ Math.pow((start.y - ende.y), 2));
+		final double e = Math.sqrt(Math.pow((start.x - ende.x), 2) + Math.pow((start.y - ende.y), 2));
 		return e;
 	}
 
 	public static Point getPointNextToY(final List<Point> points) {
-		int minX = Integer.MAX_VALUE;
+		double minX = Double.MAX_VALUE;
 		Point anchorNextToX = points.get(0);
-		;
 
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final int x = aktPoint.x;
+			final double x = aktPoint.x;
 
 			if (x < minX) {
 				minX = x;
@@ -227,8 +197,23 @@ public class Math2D {
 		return new Point(anchorNextToX.x, anchorNextToX.y);
 	}
 
-	public static Point getPointNextTo(final Point nextTo,
-			final List<Point> points) {
+	public static EntityPoint getPointNextTo(final EntityPoint nextTo, final List<EntityPoint> points) {
+		double laenge = Double.MAX_VALUE;
+		EntityPoint closest = null;
+
+		for (int i = 0; i < points.size(); i++) {
+			final EntityPoint point = points.get(i);
+			final double newLaenge = Math2D.getEntfernung(nextTo.getCoordinates(), point.getCoordinates());
+			if (newLaenge < laenge) {
+				laenge = newLaenge;
+				closest = point;
+			}
+		}
+
+		return closest;
+	}
+
+	public static Point getPointNextTo(final Point nextTo, final List<Point> points) {
 		double laenge = Double.MAX_VALUE;
 		Point closest = null;
 
@@ -244,14 +229,13 @@ public class Math2D {
 		return closest;
 	}
 
-	public static Point getPointNextToEntityPoints(final Point nextTo,
-			final List<EntityPoint> points) {
+	public static Point getPointNextToEntityPoints(final Point nextTo, final List<EntityPoint> points) {
 		double laenge = Double.MAX_VALUE;
 		Point closest = null;
 
 		for (int i = 0; i < points.size(); i++) {
 			final EntityPoint ePoint = points.get(i);
-			final Point point = ePoint.getCurrentPosition();
+			final Point point = ePoint.getCoordinates();
 			final double newLaenge = Math2D.getEntfernung(nextTo, point);
 			if (newLaenge < laenge) {
 				laenge = newLaenge;
@@ -263,12 +247,12 @@ public class Math2D {
 	}
 
 	public static Point getPointNextToX(final List<Point> points) {
-		int minY = Integer.MAX_VALUE;
+		double minY = Double.MAX_VALUE;
 		Point anchorNextToY = points.get(0);
 
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final int y = aktPoint.y;
+			final double y = aktPoint.y;
 
 			if (y < minY) {
 				minY = y;
@@ -279,12 +263,12 @@ public class Math2D {
 	}
 
 	public static Point getPointMaxDistToX(final List<Point> points) {
-		int maxY = 0;
+		double maxY = 0;
 		Point anchorMaxDistToY = points.get(0);
 
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final int y = aktPoint.y;
+			final double y = aktPoint.y;
 
 			if (y > maxY) {
 				maxY = y;
@@ -296,12 +280,12 @@ public class Math2D {
 	}
 
 	public static Point getPointMaxDistToY(final List<Point> points) {
-		int maxX = 0;
+		double maxX = 0;
 		Point anchorMaxDistToX = points.get(0);
 
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final int x = aktPoint.x;
+			final double x = aktPoint.x;
 
 			if (x > maxX) {
 				maxX = x;
@@ -313,21 +297,56 @@ public class Math2D {
 	}
 
 	public static Rectangle getHuellRect(final List<Point> punktliste) {
-		final Point x1 = new Point(Math2D.getPointNextToY(punktliste).x - 10,
-				Math2D.getPointNextToX(punktliste).y - 10);
+		final Point x1 = new Point(Math2D.getPointNextToY(punktliste).x - 10d,
+				Math2D.getPointNextToX(punktliste).y - 10d);
 		// Point x2 = new Point(getPointMaxDistToY(punktliste).x + 10,
 		// getPointNextToX(punktliste).y - 10);
 
-		final Point x3 = new Point(
-				Math2D.getPointMaxDistToY(punktliste).x + 10,
-				Math2D.getPointMaxDistToX(punktliste).y + 10);
+		final Point x3 = new Point(Math2D.getPointMaxDistToY(punktliste).x + 10d,
+				Math2D.getPointMaxDistToX(punktliste).y + 10d);
 		// Point x4 = new Point(getPointNextToY(punktliste).x - 10,
 		// getPointMaxDistToX(punktliste).y + 10);
 
-		final Rectangle rect = new Rectangle(x1, new Dimension(x3.x - x1.x,
-				x3.y - x1.y));
+		final Rectangle rect = new Rectangle(x1.getPoint(),
+				new Dimension(saveRound(x3.x - x1.x), saveRound(x3.y - x1.y)));
 
 		return rect;
+	}
+
+	/**
+	 * Sorts the specified list of points so that the points connected with lines in
+	 * the order the list specified result in a polygon with non crossing lines.
+	 * 
+	 * @param points
+	 */
+	public static void sortEntityPoints(List<EntityPoint> points) {
+		if (points.size() == 0)
+			return;
+
+		for (int i = 1; i < points.size(); i++) {
+			EntityPoint current = points.get(i - 1);
+			List<EntityPoint> subListView = points.subList(i, points.size());
+			EntityPoint nextPoint = getPointNextTo(current, subListView);
+			points.remove(nextPoint);
+			points.add(i, nextPoint);
+		}
+	}
+
+	public static double[] pqFormula(double pP, double pQ) {
+		double diskriminante;
+		diskriminante = (pP / 2.0) * (pP / 2.0) - pQ;
+		if (diskriminante >= 0) {
+			double x1, x2;
+			x1 = -(pP / 2) + Math.sqrt(diskriminante);
+			x2 = -(pP / 2) - Math.sqrt(diskriminante);
+			if (x1 == x2) {
+				return new double[] { x2 };
+			} else {
+				return new double[] { x1, x2 };// Was x1, x2
+			}
+		} else {
+			return new double[] {};
+		}
 	}
 
 }

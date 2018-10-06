@@ -5,7 +5,6 @@ import static de.schuette.cobra2D.math.Math2D.getCircle;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +19,7 @@ import de.schuette.cobra2D.entity.skills.Obstacle;
 import de.schuette.cobra2D.entity.skills.Renderable;
 import de.schuette.cobra2D.math.Line;
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 
 @Editable
@@ -45,7 +45,7 @@ public class Ball extends Entity implements Renderable, Obstacle, Moveable {
 
 		final Color oldColor = g.getColor();
 		g.setColor(Color.YELLOW);
-		g.fillOval(position.x, position.y, this.thickness, this.thickness);
+		g.fillOval(position.getRoundX(), position.getRoundY(), this.thickness, this.thickness);
 		g.setColor(oldColor);
 	}
 
@@ -71,9 +71,7 @@ public class Ball extends Entity implements Renderable, Obstacle, Moveable {
 			// engine.getMap().addEntity(debug);
 
 			final Line line = collision.getCollisionLineOpponent();
-			final Point colLineStart = line.getStartPoint();
-			final Point colLineEnd = line.getEndPoint();
-			final int colLineDegrees = Math2D.getAngle(colLineStart, colLineEnd);
+			final double colLineDegrees = Math2D.getAngle(line.getStartPoint(), line.getEndPoint());
 
 			// Einfallswinkel und Objektwinkel sind gleich: Resultat
 			// newAngle += 180 (Gegenrichtung)
@@ -82,7 +80,7 @@ public class Ball extends Entity implements Renderable, Obstacle, Moveable {
 				newAngle = (int) Math.round((this.getDegrees() + 180) % 360);
 			} else {
 				final int angle = (int) Math.round(this.getDegrees() - colLineDegrees) % 360;
-				newAngle = Math.round(360 - angle + colLineDegrees) % 360;
+				newAngle = (int) (Math.round(360 - angle + colLineDegrees) % 360);
 
 			}
 

@@ -1,6 +1,6 @@
 package de.schuette.cobra2DSandbox.modifier;
 
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 import java.util.ArrayList;
 import java.util.List;
 

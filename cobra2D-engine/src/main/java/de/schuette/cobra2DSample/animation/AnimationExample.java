@@ -1,11 +1,11 @@
 package de.schuette.cobra2DSample.animation;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.net.URL;
 import java.util.Properties;
 
 import de.schuette.cobra2D.map.Map;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.rendering.RenderToolkit;
 import de.schuette.cobra2D.ressource.AnimationMemory;
 import de.schuette.cobra2D.ressource.ImageMemory;

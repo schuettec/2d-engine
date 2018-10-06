@@ -1,14 +1,14 @@
 package de.schuette.cobra2DSandbox.camera;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 
 import de.schuette.cobra2D.entity.Entity;
-import de.schuette.cobra2D.entity.EntityPoint;
 import de.schuette.cobra2D.entity.skills.Renderable;
+import de.schuette.cobra2D.math.EntityPoint;
 import de.schuette.cobra2D.math.Line;
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 
 public class CameraUtil {
@@ -25,27 +25,23 @@ public class CameraUtil {
 	 * @param engine
 	 *            An instanstance of the engine to render to.
 	 */
-	public static void renderAllDefault(Entity entity,
-			Graphics2D bufferGraphics, Rectangle viewport, Cobra2DEngine engine) {
+	public static void renderAllDefault(Entity entity, Graphics2D bufferGraphics, Rectangle viewport,
+			Cobra2DEngine engine) {
 		if (entity instanceof Renderable) {
 			final Renderable renderable = (Renderable) entity;
 			if (engine.getRenderer().isDrawEntities()) {
-				final Point relativePosition = Math2D
-						.getRelativePointTranslation(entity, viewport);
+				final Point relativePosition = Math2D.getRelativePointTranslation(entity, viewport);
 				renderable.render(bufferGraphics, relativePosition);
 			}
 			if (engine.getRenderer().isDrawEntityLines()) {
-				CameraUtil.drawEntityLines(entity, viewport.x, viewport.y,
-						bufferGraphics);
+				CameraUtil.drawEntityLines(entity, viewport.x, viewport.y, bufferGraphics);
 			}
 			if (engine.getRenderer().isDrawEntityPoints()) {
-				CameraUtil.drawEntityPoints(entity, viewport.x, viewport.y,
-						bufferGraphics);
+				CameraUtil.drawEntityPoints(entity, viewport.x, viewport.y, bufferGraphics);
 			}
 
 			if (engine.getRenderer().isDrawEntityCenterPoint()) {
-				CameraUtil.drawCenterPoint(entity, viewport.x, viewport.y,
-						bufferGraphics);
+				CameraUtil.drawCenterPoint(entity, viewport.x, viewport.y, bufferGraphics);
 			}
 
 		}
@@ -63,16 +59,15 @@ public class CameraUtil {
 	 * @param graphics
 	 *            The graphics object to render to
 	 */
-	public static void drawEntityLines(final Entity entity, final int camPosX,
-			final int camPosY, final Graphics2D graphics) {
+	public static void drawEntityLines(final Entity entity, final int camPosX, final int camPosY,
+			final Graphics2D graphics) {
 		// final Color old = graphics.getColor();
 		// graphics.setColor(Color.red);
 
 		for (final Line line : entity.getLineList()) {
 
-			graphics.drawLine((int) line.getX1().x - camPosX,
-					(int) line.getX1().y - camPosY, (int) line.getX2().x
-							- camPosX, (int) line.getX2().y - camPosY);
+			graphics.drawLine((int) line.getX1().x - camPosX, (int) line.getX1().y - camPosY,
+					(int) line.getX2().x - camPosX, (int) line.getX2().y - camPosY);
 		}
 		// graphics.setColor(old);
 
@@ -90,13 +85,13 @@ public class CameraUtil {
 	 * @param graphics
 	 *            The graphics object to render to
 	 */
-	public static void drawEntityPoints(final Entity entity, final int camPosX,
-			final int camPosY, final Graphics2D graphics) {
+	public static void drawEntityPoints(final Entity entity, final int camPosX, final int camPosY,
+			final Graphics2D graphics) {
 		// final Color old = graphics.getColor();
 		// graphics.setColor(Color.red);
 		for (final EntityPoint point : entity.getPointList()) {
-			graphics.fillOval(point.getCurrentPosition().x - camPosX - 3,
-					point.getCurrentPosition().y - 3 - camPosY, 6, 6);
+			graphics.fillOval(point.getCoordinates().getRoundX() - camPosX - 3,
+					point.getCoordinates().getRoundY() - 3 - camPosY, 6, 6);
 		}
 		// graphics.setColor(old);
 
@@ -114,12 +109,12 @@ public class CameraUtil {
 	 * @param graphics
 	 *            The graphics object to render to
 	 */
-	public static void drawCenterPoint(final Entity entity, final int camPosX,
-			final int camPosY, final Graphics2D graphics) {
+	public static void drawCenterPoint(final Entity entity, final int camPosX, final int camPosY,
+			final Graphics2D graphics) {
 		// final Color old = graphics.getColor();
 		// graphics.setColor(Color.CYAN);
 		Point center = entity.getCenterPoint();
-		graphics.fillOval(center.x - camPosX - 3, center.y - 3 - camPosY, 6, 6);
+		graphics.fillOval(center.getRoundX() - camPosX - 3, center.getRoundY() - 3 - camPosY, 6, 6);
 		// graphics.setColor(old);
 
 	}

@@ -3,7 +3,7 @@ package de.schuette.cobra2D.entity.editing;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Point;
+import de.schuette.cobra2D.math.Point;
 import java.lang.reflect.Field;
 
 import javax.swing.Box;

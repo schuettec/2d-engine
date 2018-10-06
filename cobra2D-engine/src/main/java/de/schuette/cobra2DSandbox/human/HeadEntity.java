@@ -3,7 +3,6 @@ package de.schuette.cobra2DSandbox.human;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
-import java.awt.Point;
 import java.awt.PointerInfo;
 
 import de.schuette.cobra2D.entity.EntityInitializeException;
@@ -13,6 +12,7 @@ import de.schuette.cobra2D.entity.editing.NumberEditor;
 import de.schuette.cobra2D.entity.skills.Moveable;
 import de.schuette.cobra2D.entity.skills.Renderable;
 import de.schuette.cobra2D.math.Math2D;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 import de.schuette.cobra2DSandbox.texture.TextureEntity;
 
@@ -40,11 +40,9 @@ public class HeadEntity extends TextureEntity implements Moveable {
 	}
 
 	@Override
-	public void initialize(Cobra2DEngine engine)
-			throws EntityInitializeException {
+	public void initialize(Cobra2DEngine engine) throws EntityInitializeException {
 		if (walkcycle == null) {
-			throw new EntityInitializeException(
-					"Walkcycle attribute cannot be empty.");
+			throw new EntityInitializeException("Walkcycle attribute cannot be empty.");
 		}
 
 		super.initialize(engine);
@@ -99,10 +97,8 @@ public class HeadEntity extends TextureEntity implements Moveable {
 	public void next() {
 		if (walkcycle != null) {
 			final Point newPosition = this.walkcycle.getCenterPoint();
-			newPosition.x = newPosition.x
-					- Math2D.saveRound(this.getSize().width / 2.0);
-			newPosition.y = newPosition.y
-					- Math2D.saveRound(this.getSize().height / 2.0);
+			newPosition.x = newPosition.x - Math2D.saveRound(this.getSize().width / 2.0);
+			newPosition.y = newPosition.y - Math2D.saveRound(this.getSize().height / 2.0);
 			this.setPosition(newPosition);
 		}
 	}
@@ -112,20 +108,17 @@ public class HeadEntity extends TextureEntity implements Moveable {
 		System.out.println(getDegrees());
 		if (walkcycle != null) {
 			final PointerInfo a = MouseInfo.getPointerInfo();
-			final Point mousePosition = a.getLocation();
+			final Point mousePosition = Point.ofAWT(a.getLocation());
 
-			final Point screenPosition = this.engine.getRenderer()
-					.getLocation();
+			final Point screenPosition = Point.ofAWT(this.engine.getRenderer().getLocation());
 			final Dimension screenSize = this.getSize();
-			final Point middleScreenPoint = new Point(screenSize.width,
-					screenSize.height);
-			middleScreenPoint.x = screenPosition.x + position.x
+			final Point middleScreenPoint = new Point(screenSize.width, screenSize.height);
+			middleScreenPoint.x = screenPosition.getRoundX() + position.getRoundX()
 					+ Math2D.saveRound(middleScreenPoint.x / 2.0);
-			middleScreenPoint.y = screenPosition.y + position.y
+			middleScreenPoint.y = screenPosition.getRoundY() + position.getRoundY()
 					+ Math2D.saveRound(middleScreenPoint.y / 2.0);
 
-			final double degrees = Math2D.getAngle(middleScreenPoint,
-					mousePosition);
+			final double degrees = Math2D.getAngle(middleScreenPoint, mousePosition);
 
 			this.setDegrees(this.walkcycle.getDegrees());
 
