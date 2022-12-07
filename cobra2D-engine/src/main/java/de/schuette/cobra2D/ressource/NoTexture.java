@@ -7,9 +7,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Base64;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.DatatypeConverter;
 
 import de.schuette.cobra2D.rendering.RenderToolkit;
 
@@ -23,8 +23,7 @@ public class NoTexture {
 		String filename = args[0];
 
 		if (filename == null || filename.trim().isEmpty()) {
-			System.out
-					.println("Please start this application with a filename of a picture.");
+			System.out.println("Please start this application with a filename of a picture.");
 			System.exit(1);
 		}
 
@@ -51,7 +50,7 @@ public class NoTexture {
 		}
 
 		byte[] bytes = bos.toByteArray();
-		String base64Binary = DatatypeConverter.printBase64Binary(bytes);
+		String base64Binary = Base64.getEncoder().encodeToString(bytes);
 
 		System.out.println(base64Binary);
 
@@ -72,8 +71,7 @@ public class NoTexture {
 
 	private static void createVolatileImageOnce() {
 		if (NO_IMAGE_TEXTURE == null) {
-			byte[] base64 = DatatypeConverter
-					.parseBase64Binary(NO_IMAGE_BASE64);
+			byte[] base64 = Base64.getDecoder().decode(NO_IMAGE_BASE64);
 			ByteArrayInputStream in = new ByteArrayInputStream(base64);
 			try {
 				BufferedImage read = ImageIO.read(in);
