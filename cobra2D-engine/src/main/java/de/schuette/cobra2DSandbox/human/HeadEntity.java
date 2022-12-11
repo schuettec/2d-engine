@@ -51,10 +51,8 @@ public class HeadEntity extends TextureEntity implements Moveable {
 	/**
 	 * Constructs a head entity an connects it to a walkcycle entity.
 	 * 
-	 * @param walkcycle
-	 *            The walkcycle that is prepared and initialized.
-	 * @param textureKey
-	 *            The texture for this head.
+	 * @param walkcycle  The walkcycle that is prepared and initialized.
+	 * @param textureKey The texture for this head.
 	 */
 	// public HeadEntity(final WalkcycleEntity walkcycle, final String
 	// textureKey) {
@@ -64,10 +62,8 @@ public class HeadEntity extends TextureEntity implements Moveable {
 	/**
 	 * Constructs a head entity an connects it to a walkcycle entity.
 	 * 
-	 * @param walkcycle
-	 *            The walkcycle that is prepared and initialized.
-	 * @param textureKey
-	 *            The texture for this head.
+	 * @param walkcycle  The walkcycle that is prepared and initialized.
+	 * @param textureKey The texture for this head.
 	 */
 	// public HeadEntity(final WalkcycleEntity walkcycle, final String
 	// textureKey,
@@ -79,12 +75,9 @@ public class HeadEntity extends TextureEntity implements Moveable {
 	/**
 	 * Constructs a head entity an connects it to a walkcycle entity.
 	 * 
-	 * @param walkcycle
-	 *            The walkcycle that is prepared and initialized.
-	 * @param textureKey
-	 *            The texture for this head.
-	 * @param filter
-	 *            The texture filter for this head.
+	 * @param walkcycle  The walkcycle that is prepared and initialized.
+	 * @param textureKey The texture for this head.
+	 * @param filter     The texture filter for this head.
 	 */
 	// public HeadEntity(final WalkcycleEntity walkcycle, final String
 	// textureKey,
@@ -105,7 +98,6 @@ public class HeadEntity extends TextureEntity implements Moveable {
 
 	@Override
 	public void render(final Graphics2D graphics, final Point position) {
-		System.out.println(getDegrees());
 		if (walkcycle != null) {
 			final PointerInfo a = MouseInfo.getPointerInfo();
 			final Point mousePosition = Point.ofAWT(a.getLocation());

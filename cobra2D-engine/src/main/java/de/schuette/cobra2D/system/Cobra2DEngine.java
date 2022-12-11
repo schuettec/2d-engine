@@ -1,5 +1,10 @@
 package de.schuette.cobra2D.system;
 
+import static java.util.Objects.nonNull;
+
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,12 +42,10 @@ public class Cobra2DEngine {
 
 	private static Logger log;
 
-	protected static final String[] PROPERTIES_KEYS = new String[] {
-			Cobra2DConstants.RESOLUTION_X, Cobra2DConstants.RESOLUTION_Y,
-			Cobra2DConstants.BIT_DEPHT, Cobra2DConstants.REFRESH_REATE,
-			Cobra2DConstants.REQUESTED_FPS, Cobra2DConstants.FULLSCREEN,
-			Cobra2DConstants.MAP_UPDATE, Cobra2DConstants.USE_RENDERER,
-			Cobra2DConstants.DEFAULT_CONTROLLER };
+	protected static final String[] PROPERTIES_KEYS = new String[] { Cobra2DConstants.RESOLUTION_X,
+			Cobra2DConstants.RESOLUTION_Y, Cobra2DConstants.BIT_DEPHT, Cobra2DConstants.REFRESH_REATE,
+			Cobra2DConstants.REQUESTED_FPS, Cobra2DConstants.FULLSCREEN, Cobra2DConstants.MAP_UPDATE,
+			Cobra2DConstants.USE_RENDERER, Cobra2DConstants.DEFAULT_CONTROLLER };
 
 	protected int fps;
 	protected int actualFPS;
@@ -131,16 +134,14 @@ public class Cobra2DEngine {
 
 				// startTime = System.nanoTime();
 				/*
-				 * If frame animation is taking too long, update the game state
-				 * without rendering it, to get the updates/sec nearer to the
-				 * required FPS.
+				 * If frame animation is taking too long, update the game state without
+				 * rendering it, to get the updates/sec nearer to the required FPS.
 				 */
 
 				if (Cobra2DEngine.this.mapUpdate) {
 
 					int skips = 0;
-					while ((excess > period)
-							&& (skips < Cobra2DEngine.this.maxFrameSkips)) {
+					while ((excess > period) && (skips < Cobra2DEngine.this.maxFrameSkips)) {
 						excess -= period;
 						if (!Cobra2DEngine.this.running) {
 							break;
@@ -167,21 +168,17 @@ public class Cobra2DEngine {
 				}
 				stopTime = System.nanoTime();
 				neededTime = stopTime - startTime;
-				final int runningTime = (int) Math
-						.round(neededTime / 1000000.0);
+				final int runningTime = (int) Math.round(neededTime / 1000000.0);
 
-				Cobra2DEngine.this.actualFPS = (int) Math
-						.round(1000.0 / runningTime);
+				Cobra2DEngine.this.actualFPS = (int) Math.round(1000.0 / runningTime);
 
 				// Hochrechnung auf eine Sekunde
 				final double factor = 1000.0 / runningTime;
 
-				Cobra2DEngine.this.actualUPS = (int) Math.round(mapUpdates
-						* factor);
+				Cobra2DEngine.this.actualUPS = (int) Math.round(mapUpdates * factor);
 
 				if (Cobra2DEngine.this.actionsAfterRenderCycle.size() != 0) {
-					final RenderPausedAction action = Cobra2DEngine.this.actionsAfterRenderCycle
-							.get(0);
+					final RenderPausedAction action = Cobra2DEngine.this.actionsAfterRenderCycle.get(0);
 					Cobra2DEngine.this.actionsAfterRenderCycle.remove(action);
 					action.performAction();
 				}
@@ -193,15 +190,14 @@ public class Cobra2DEngine {
 	private boolean useKeyboardController;
 
 	/**
-	 * Use this static method at the beginning of your application to setup the
-	 * JVM Properties used by this engine. Use the resource type to determine
-	 * where resources are loaded from.
+	 * Use this static method at the beginning of your application to setup the JVM
+	 * Properties used by this engine. Use the resource type to determine where
+	 * resources are loaded from.
 	 */
 	public static void setupEnvironment(RessourceType resourceType) {
 		// Prepare VM configurations:
 		URLStreamHandlerRegistry registry = new URLStreamHandlerRegistry();
-		registry.addHandler("resource",
-				new URLResourceTypeHandler(resourceType.toString()));
+		registry.addHandler("resource", new URLResourceTypeHandler(resourceType.toString()));
 		registry.addHandler("classpath", new URLClasspathHandler());
 		registry.addHandler("install-dir", new URLInstallDirectoryHandler());
 		URL.setURLStreamHandlerFactory(registry);
@@ -213,40 +209,49 @@ public class Cobra2DEngine {
 	}
 
 	public static void main(final String[] args) throws Exception {
-		// Setup JVM properties
-		setupEnvironment(RessourceType.INSTALL_DIR);
 
-		// Check arguments!
-		if (args.length != 1) {
-			log.error("Start Cobra2DEngine with the path to configfile.");
-			System.exit(1);
+		if (nonNull(args) && args.length == 1 && "modes".equals(args[0])) {
+			try {
+				GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+				GraphicsDevice display = ge.getDefaultScreenDevice();
+				DisplayMode[] availableModes = display.getDisplayModes();
+				for (DisplayMode mode : availableModes) {
+					System.out.println(mode.toString());
+				}
+			} catch (Exception e) {
+				System.out.println("Cannot list display modes");
+				e.printStackTrace();
+			}
+		} else {
+			// Setup JVM properties
+			setupEnvironment(RessourceType.INSTALL_DIR);
+
+			// Check arguments!
+			if (args.length != 1) {
+				log.error("Start Cobra2DEngine with the path to configfile.");
+				System.exit(1);
+			}
+
+			final String configString = args[0];
+			URL configURL = null;
+			try {
+				configURL = new URL(configString);
+			} catch (MalformedURLException e) {
+				log.error("URL to config file is malformed. Please specify protocol and location correctly", e);
+				e.printStackTrace();
+				System.exit(1);
+			}
+
+			new Cobra2DEngine(configURL, new WindowRenderer());
 		}
-
-		final String configString = args[0];
-		URL configURL = null;
-		try {
-			configURL = new URL(configString);
-		} catch (MalformedURLException e) {
-			log.error(
-					"URL to config file is malformed. Please specify protocol and location correctly",
-					e);
-			e.printStackTrace();
-			System.exit(1);
-		}
-
-		new Cobra2DEngine(configURL, new WindowRenderer());
-
 	}
 
 	/**
 	 * Constructs an instance of the engine by using the configURL to read the
-	 * configurations from a file. The engine will use the default window
-	 * renderer.
+	 * configurations from a file. The engine will use the default window renderer.
 	 * 
-	 * @param configURL
-	 *            The URL to the config file.
-	 * @throws Exception
-	 *             Thrown if any exception occurs.
+	 * @param configURL The URL to the config file.
+	 * @throws Exception Thrown if any exception occurs.
 	 */
 	public Cobra2DEngine(final URL configURL) throws Exception {
 		this.loadConfiguration(configURL, null);
@@ -257,10 +262,8 @@ public class Cobra2DEngine {
 	 * configure the engines runtime. The engine will use the default window
 	 * renderer.
 	 * 
-	 * @param properties
-	 *            The properties used for configuration of the engine.
-	 * @throws Exception
-	 *             Thrown if any exception occurs.
+	 * @param properties The properties used for configuration of the engine.
+	 * @throws Exception Thrown if any exception occurs.
 	 */
 	public Cobra2DEngine(final Properties properties) throws Exception {
 		this.loadConfiguration(properties, null);
@@ -281,42 +284,33 @@ public class Cobra2DEngine {
 
 	/**
 	 * Constructs an instance of the engine by using the configURL to read the
-	 * configurations from a file. You can specify a special renderer instance
-	 * to determine the rendering target.
+	 * configurations from a file. You can specify a special renderer instance to
+	 * determine the rendering target.
 	 * 
-	 * @param configURL
-	 *            The URL to the config file.
-	 * @param renderer
-	 *            The special renderer instance or NULL to use the default
-	 *            renderer
-	 * @throws Exception
-	 *             Thrown if any exception occurs.
+	 * @param configURL The URL to the config file.
+	 * @param renderer  The special renderer instance or NULL to use the default
+	 *                  renderer
+	 * @throws Exception Thrown if any exception occurs.
 	 */
-	public Cobra2DEngine(final URL configURL, Renderer renderer)
-			throws Exception {
+	public Cobra2DEngine(final URL configURL, Renderer renderer) throws Exception {
 		this.loadConfiguration(configURL, renderer);
 	}
 
 	/**
 	 * Constructs an instance of the engine by using the given properties to
-	 * configure the engines runtime. You can specify a special renderer
-	 * instance to determine the rendering target.
+	 * configure the engines runtime. You can specify a special renderer instance to
+	 * determine the rendering target.
 	 * 
-	 * @param properties
-	 *            The properties used for configuration of the engine.
-	 * @param renderer
-	 *            The special renderer instance or NULL to use the default
-	 *            renderer
-	 * @throws Exception
-	 *             Thrown if any exception occurs.
+	 * @param properties The properties used for configuration of the engine.
+	 * @param renderer   The special renderer instance or NULL to use the default
+	 *                   renderer
+	 * @throws Exception Thrown if any exception occurs.
 	 */
-	public Cobra2DEngine(final Properties properties, Renderer renderer)
-			throws Exception {
+	public Cobra2DEngine(final Properties properties, Renderer renderer) throws Exception {
 		this.loadConfiguration(properties, renderer);
 	}
 
-	private void loadConfiguration(final URL configURL, Renderer renderer)
-			throws Exception {
+	private void loadConfiguration(final URL configURL, Renderer renderer) throws Exception {
 
 		// Load configfile
 		try {
@@ -329,8 +323,7 @@ public class Cobra2DEngine {
 			preloadedProperties.load(inStream);
 			inStream.close();
 			this.loadConfiguration(preloadedProperties, renderer);
-			log.info("Engine configuration done. Using renderer: "
-					+ renderer.getClass().getSimpleName());
+			log.info("Engine configuration done. Using renderer: " + renderer.getClass().getSimpleName());
 		} catch (final FileNotFoundException e) {
 			throw e;
 		} catch (final IOException e) {
@@ -339,25 +332,19 @@ public class Cobra2DEngine {
 
 	}
 
-	private void loadConfiguration(final Properties properties,
-			Renderer renderer) throws Exception {
+	private void loadConfiguration(final Properties properties, Renderer renderer) throws Exception {
 		// Checking config
 		for (final String key : Cobra2DEngine.PROPERTIES_KEYS) {
 			if (!properties.containsKey(key)) {
 				log.error("Configuration error. See details below.");
-				throw new Exception(
-						"Incorrect configfile: Missing configuration for '"
-								+ key + "'");
+				throw new Exception("Incorrect configfile: Missing configuration for '" + key + "'");
 			}
 		}
 
 		// Start engineprocesses such as renderloop, map-Calculating other stuff
 		// Add the renderer to a JFrame
-		final boolean fullscreen = properties.getProperty(
-				Cobra2DConstants.FULLSCREEN).equalsIgnoreCase("true");
-		this.useRenderer = properties
-				.getProperty(Cobra2DConstants.USE_RENDERER).equalsIgnoreCase(
-						"true");
+		final boolean fullscreen = properties.getProperty(Cobra2DConstants.FULLSCREEN).equalsIgnoreCase("true");
+		this.useRenderer = properties.getProperty(Cobra2DConstants.USE_RENDERER).equalsIgnoreCase("true");
 		this.renderer = renderer;
 		if (useRenderer) {
 			log.info("Configured using renderer.");
@@ -365,28 +352,20 @@ public class Cobra2DEngine {
 			log.info("Configured using no renderer, working dedicated instead.");
 		}
 
-		this.mapUpdate = properties.getProperty(Cobra2DConstants.MAP_UPDATE)
-				.equalsIgnoreCase("true");
+		this.mapUpdate = properties.getProperty(Cobra2DConstants.MAP_UPDATE).equalsIgnoreCase("true");
 		log.info("Configured performing map updates.");
 
-		this.useKeyboardController = Boolean.parseBoolean(properties
-				.getProperty(Cobra2DConstants.DEFAULT_CONTROLLER));
+		this.useKeyboardController = Boolean.parseBoolean(properties.getProperty(Cobra2DConstants.DEFAULT_CONTROLLER));
 		log.info("Configured using keyboard controller.");
 
-		final int resX = Integer.parseInt(properties
-				.getProperty(Cobra2DConstants.RESOLUTION_X));
-		final int resY = Integer.parseInt(properties
-				.getProperty(Cobra2DConstants.RESOLUTION_Y));
-		log.info("Configured using " + resX + "x" + resY
-				+ " for rendering dimensions.");
-		final int bitDepth = Integer.parseInt(properties
-				.getProperty(Cobra2DConstants.BIT_DEPHT));
+		final int resX = Integer.parseInt(properties.getProperty(Cobra2DConstants.RESOLUTION_X));
+		final int resY = Integer.parseInt(properties.getProperty(Cobra2DConstants.RESOLUTION_Y));
+		log.info("Configured using " + resX + "x" + resY + " for rendering dimensions.");
+		final int bitDepth = Integer.parseInt(properties.getProperty(Cobra2DConstants.BIT_DEPHT));
 		log.info("Configured using " + bitDepth + " bit depth.");
-		final int refreshRate = Integer.parseInt(properties
-				.getProperty(Cobra2DConstants.REFRESH_REATE));
+		final int refreshRate = Integer.parseInt(properties.getProperty(Cobra2DConstants.REFRESH_REATE));
 		log.info(refreshRate + " Hz refresh rate requested by configuration.");
-		this.fps = Integer.parseInt(properties
-				.getProperty(Cobra2DConstants.REQUESTED_FPS));
+		this.fps = Integer.parseInt(properties.getProperty(Cobra2DConstants.REQUESTED_FPS));
 		log.info(fps + " frames per second requested by configuration.");
 
 		// Create renderer base on the configuration.
@@ -398,8 +377,7 @@ public class Cobra2DEngine {
 				if (renderer == null) {
 					this.renderer = new WindowRenderer();
 				}
-				this.renderer.initializeRenderer(this, resX, resY, bitDepth,
-						refreshRate, fullscreen);
+				this.renderer.initializeRenderer(this, resX, resY, bitDepth, refreshRate, fullscreen);
 				log.info("Renderer initialized.");
 
 				if (this.useKeyboardController) {
@@ -416,8 +394,7 @@ public class Cobra2DEngine {
 	/**
 	 * This method is used to load a level into the engine.
 	 * 
-	 * @param level
-	 *            The level to load.
+	 * @param level The level to load.
 	 */
 	public void loadLevel(final Cobra2DLevel level) {
 		// Externalize in thread:
@@ -448,11 +425,10 @@ public class Cobra2DEngine {
 
 	/**
 	 * Loads a serialized level from file system and replaces the current engine
-	 * state. If loading was successfull, the engine continues running the
-	 * loaded level.
+	 * state. If loading was successfull, the engine continues running the loaded
+	 * level.
 	 * 
-	 * @param levelFile
-	 *            The levelfile of the serialized cobra2D level.
+	 * @param levelFile The levelfile of the serialized cobra2D level.
 	 */
 	public void loadLevel(final File levelFile) {
 		// Externalize in thread:
@@ -495,8 +471,7 @@ public class Cobra2DEngine {
 	 * Saves the current state of the cobra2D level to the file. The engine is
 	 * stopped to take a snapshot of the current state of the level.
 	 * 
-	 * @param levelFile
-	 *            The file to save engine level.
+	 * @param levelFile The file to save engine level.
 	 */
 	public void saveLevel(final File levelFile) {
 		log.info("Pausing engine to save level state.");
@@ -532,8 +507,8 @@ public class Cobra2DEngine {
 	}
 
 	/**
-	 * Pauses the render&update engine, so that resource storages and renderer
-	 * can be exchanged or modified.
+	 * Pauses the render&update engine, so that resource storages and renderer can
+	 * be exchanged or modified.
 	 */
 	public void pauseEngine() {
 		final RenderPausedAction action = new RenderPausedAction() {
@@ -562,8 +537,8 @@ public class Cobra2DEngine {
 	/**
 	 * This method shuts down the engine and frees all resources. This method
 	 * proceeds with high NPE security, to avoid unneccessary NPEs during
-	 * destruction. NOTE: THIS METHOD INVALIDATES THIS OBJECT AND SHOULD BE USED
-	 * IF ENGINE IS NOT USED ANYMORE.
+	 * destruction. NOTE: THIS METHOD INVALIDATES THIS OBJECT AND SHOULD BE USED IF
+	 * ENGINE IS NOT USED ANYMORE.
 	 */
 	public void shutdownEngine() {
 		final RenderPausedAction shutdownAction = new RenderPausedAction() {
@@ -588,8 +563,8 @@ public class Cobra2DEngine {
 	}
 
 	/**
-	 * Clears the resource storages and data structures to switch levels by
-	 * using the same engine instance.
+	 * Clears the resource storages and data structures to switch levels by using
+	 * the same engine instance.
 	 */
 	public void resetEngine() {
 		if (this.useKeyboardController) {
@@ -660,11 +635,10 @@ public class Cobra2DEngine {
 	}
 
 	/**
-	 * This method is only used internally by this engine. To bind a level to
-	 * the engine use level.afterDeserialization(engine);
+	 * This method is only used internally by this engine. To bind a level to the
+	 * engine use level.afterDeserialization(engine);
 	 * 
-	 * @param level
-	 *            The level to set internally.
+	 * @param level The level to set internally.
 	 */
 	protected void setLevel(final Cobra2DLevel level) {
 		this.level = level;
@@ -740,6 +714,22 @@ public class Cobra2DEngine {
 	public void setDrawEntityCenterPoint(boolean b) {
 		if (isUseRenderer())
 			renderer.setDrawEntityCenterPoint(b);
+	}
+
+	public DisplayMode getDisplayMode(int resolutionX, int resolutionY, int bitDepth, int refreshRate) {
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice display = ge.getDefaultScreenDevice();
+		DisplayMode[] availableModes = display.getDisplayModes();
+		for (DisplayMode mode : availableModes) {
+			System.out.println(mode.toString());
+			if (mode.getWidth() == resolutionX && mode.getHeight() == resolutionY
+					&& ((mode.getBitDepth() == bitDepth) || mode.getBitDepth() == -1)
+					&& mode.getRefreshRate() == refreshRate) {
+				return mode;
+			}
+		}
+		throw new RuntimeException("Cannot find display mode: " + resolutionX + "x" + resolutionY + ":" + refreshRate
+				+ "hz at " + bitDepth + " bit depth.");
 	}
 
 }

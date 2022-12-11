@@ -1,12 +1,12 @@
 package de.schuette.cobra2DSample.human;
 
 import java.awt.Dimension;
-import de.schuette.cobra2D.math.Point;
 import java.net.URL;
 import java.util.Properties;
 
 import de.schuette.cobra2D.entity.Entity;
 import de.schuette.cobra2D.map.Map;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.rendering.HSBTransparencyFilter;
 import de.schuette.cobra2D.rendering.RenderToolkit;
 import de.schuette.cobra2D.ressource.AnimationMemory;
@@ -34,12 +34,12 @@ public class HumanExample {
 	public static void main(final String... args) throws Exception {
 		// Build configuration
 		final Properties engineConfiguration = new Properties();
-		engineConfiguration.put(Cobra2DConstants.RESOLUTION_X, "1280"); // 1920
-		engineConfiguration.put(Cobra2DConstants.RESOLUTION_Y, "480"); // 1080
+		engineConfiguration.put(Cobra2DConstants.RESOLUTION_X, "1920"); // 1920
+		engineConfiguration.put(Cobra2DConstants.RESOLUTION_Y, "1080"); // 1080
 		engineConfiguration.put(Cobra2DConstants.BIT_DEPHT, "32");
 		engineConfiguration.put(Cobra2DConstants.REFRESH_REATE, "60");
-		engineConfiguration.put(Cobra2DConstants.REQUESTED_FPS, "100");
-		engineConfiguration.put(Cobra2DConstants.FULLSCREEN, "false");
+		engineConfiguration.put(Cobra2DConstants.REQUESTED_FPS, "60");
+		engineConfiguration.put(Cobra2DConstants.FULLSCREEN, "true");
 		engineConfiguration.put(Cobra2DConstants.MAP_UPDATE, "true");
 		engineConfiguration.put(Cobra2DConstants.USE_RENDERER, "true");
 		engineConfiguration.put(Cobra2DConstants.DEFAULT_CONTROLLER, "true");
@@ -48,13 +48,12 @@ public class HumanExample {
 		Cobra2DEngine.setupEnvironment(RessourceType.CLASSPATH);
 		final Cobra2DEngine engine = new Cobra2DEngine(engineConfiguration);
 		// Set debug option: Renderer makes now entity lines visible
-		engine.getRenderer().setDrawEntityLines(true);
-		engine.getRenderer().setDrawEntityPoints(true);
+		engine.getRenderer().setDrawEntityLines(false);
+		engine.getRenderer().setDrawEntityPoints(false);
 
 		// Load textures and animations
 		final ImageMemory imgMemory = engine.getImageMemory();
-		imgMemory.loadImage("walkcyle_harvey", new URL(
-				"resource:walkcyle_harvey.png"));
+		imgMemory.loadImage("walkcyle_harvey", new URL("resource:walkcyle_harvey.png"));
 		imgMemory.loadImage("head", new URL("resource:head.png"));
 		imgMemory.loadImage("floor", new URL("resource:floor.png"));
 		imgMemory.loadImage("chair", new URL("resource:chair.png"));

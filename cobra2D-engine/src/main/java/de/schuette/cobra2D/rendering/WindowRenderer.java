@@ -1,5 +1,7 @@
 package de.schuette.cobra2D.rendering;
 
+import static java.util.Objects.nonNull;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -270,12 +272,13 @@ public class WindowRenderer extends JFrame implements Renderer {
 			this.gd.setFullScreenWindow(this); // switch on FSEM
 			// we can now adjust the display modes, if we wish
 			try {
-				this.gd.setDisplayMode(
-						new DisplayMode(this.resolutionX, this.resolutionY, this.bitDepth, this.refreshRate));
+				DisplayMode displayMode = engine.getDisplayMode(this.resolutionX, this.resolutionY, this.bitDepth,
+						this.refreshRate);
+				this.gd.setDisplayMode(displayMode);
 
 			} catch (final Exception e) {
 				this.finish();
-				throw new RendererException("Cannot establish display mode! " + resolutionX + "x" + resolutionY);
+				throw new RendererException("Cannot establish display mode! " + resolutionX + "x" + resolutionY, e);
 			}
 
 		} else {
@@ -331,8 +334,12 @@ public class WindowRenderer extends JFrame implements Renderer {
 
 			@Override
 			public void run() {
-				worldViewGraphics.dispose();
-				bufferGraphics.dispose();
+				if (nonNull(bufferGraphics)) {
+					worldViewGraphics.dispose();
+				}
+				if (nonNull(bufferGraphics)) {
+					bufferGraphics.dispose();
+				}
 				// UNINITIALIZE RENDERING MODE
 				if (WindowRenderer.this.fullscreen) {
 					final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

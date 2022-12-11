@@ -1,11 +1,11 @@
 package de.schuette.cobra2DSample.texture;
 
-import de.schuette.cobra2D.math.Point;
 import java.net.URL;
 import java.util.Properties;
 
 import de.schuette.cobra2D.entity.Entity;
 import de.schuette.cobra2D.map.Map;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.ressource.ImageMemory;
 import de.schuette.cobra2D.system.Cobra2DConstants;
 import de.schuette.cobra2D.system.Cobra2DConstants.RessourceType;
@@ -36,6 +36,7 @@ public class TextureExample {
 		// Set debug option: Renderer makes now entity lines visible
 		engine.getRenderer().setDrawEntityLines(true);
 		engine.getRenderer().setDrawEntityPoints(true);
+		engine.getRenderer().setDrawEntityCenterPoint(true);
 
 		// Load textures and animations
 		final ImageMemory imgMemory = engine.getImageMemory();

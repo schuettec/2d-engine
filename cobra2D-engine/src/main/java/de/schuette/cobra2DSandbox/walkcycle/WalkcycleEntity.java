@@ -1,7 +1,6 @@
 package de.schuette.cobra2DSandbox.walkcycle;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 import org.apache.log4j.Logger;
@@ -29,10 +28,6 @@ public class WalkcycleEntity extends LayeredEntity implements Moveable {
 
 	public WalkcycleEntity() {
 		super();
-		this.setSize(new Dimension(100, 200));
-		this.createRectangleEntityPoints();
-
-		this.setPosition(new Point(100, 100));
 	}
 
 	@Override
@@ -55,11 +50,13 @@ public class WalkcycleEntity extends LayeredEntity implements Moveable {
 	@Override
 	public void render(Graphics2D graphics, Point position) {
 		graphics.setColor(Color.YELLOW);
+		graphics.drawLine(position.getRoundX(), position.getRoundY(), position.getRoundX() + getSize().width,
+				position.getRoundY() + getSize().height);
 	}
 
 	@Override
 	public void next() {
-//		this.body.setPosition(this.getPosition());
+		this.setPosition(this.getPosition());
 	}
 
 }

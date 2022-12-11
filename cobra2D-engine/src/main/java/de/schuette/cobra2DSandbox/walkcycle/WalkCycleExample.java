@@ -1,5 +1,6 @@
 package de.schuette.cobra2DSandbox.walkcycle;
 
+import java.awt.Dimension;
 import java.util.Properties;
 
 import de.schuette.cobra2D.map.Map;
@@ -46,6 +47,10 @@ public class WalkCycleExample {
 
 		// Add entities
 		WalkcycleEntity walkcycleEntity = new WalkcycleEntity();
+		walkcycleEntity.setSize(new Dimension(100, 200));
+		walkcycleEntity.setPosition(new Point(300, 300));
+		walkcycleEntity.initialize(engine);
+		walkcycleEntity.createRectangleEntityPoints();
 		map.addEntity(walkcycleEntity);
 
 		final AdvancedMapCamera camera = new AdvancedMapCamera();
