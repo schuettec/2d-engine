@@ -12,7 +12,6 @@ import de.schuette.cobra2D.system.Cobra2DConstants.RessourceType;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 import de.schuette.cobra2DSandbox.camera.AdvancedMapCamera;
 import de.schuette.cobra2DSandbox.camera.InfoOverlayCamera;
-import de.schuette.cobra2DSandbox.modifier.ArrayModifier;
 import de.schuette.cobra2DSandbox.modifier.EntityCreator;
 import de.schuette.cobra2DSandbox.texture.TextureEntity;
 
@@ -65,13 +64,20 @@ public class TextureExample {
 			}
 
 		};
-		ArrayModifier modifier = new ArrayModifier();
-		modifier.setPosition(new Point(100, 100));
-		modifier.setxMultiplier(10);
-		modifier.setyMultiplier(10);
-		modifier.setCreator(creator);
-		modifier.initialize(engine);
-		map.addEntity(modifier);
+//		ArrayModifier modifier = new ArrayModifier();
+//		modifier.setPosition(new Point(100, 100));
+//		modifier.setxMultiplier(10);
+//		modifier.setyMultiplier(10);
+//		modifier.setCreator(creator);
+//		modifier.initialize(engine);
+//		map.addEntity(modifier);
+
+		final TextureEntity texture = new TextureEntity();
+		texture.setPosition(new Point(0, 0));
+		texture.setTextureKey("floor");
+		texture.initialize(engine);
+		texture.createRectangleEntityPoints();
+		map.addEntity(texture);
 
 		final AdvancedMapCamera camera = new AdvancedMapCamera();
 		camera.setBenchmarkEntities(true);
