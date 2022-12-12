@@ -1,8 +1,0 @@
-19:46:59,301  INFO [Cobra2DEngine] - Cobra2DEngine - Environment initialized.
-19:46:59,302  INFO [Cobra2DEngine] - Configured using renderer.
-19:46:59,302  INFO [Cobra2DEngine] - Configured performing map updates.
-19:46:59,302  INFO [Cobra2DEngine] - Configured using keyboard controller.
-19:46:59,302  INFO [Cobra2DEngine] - Configured using 1024x768 for rendering dimensions.
-19:46:59,302  INFO [Cobra2DEngine] - Configured using 32 bit depth.
-19:46:59,302  INFO [Cobra2DEngine] - 60 Hz refresh rate requested by configuration.
-19:46:59,302  INFO [Cobra2DEngine] - 200 frames per second requested by configuration.
