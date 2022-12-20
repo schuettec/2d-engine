@@ -316,14 +316,14 @@ public class Flash extends Entity implements Renderable {
 		this.setSize(new Dimension(this.width, this.width));
 
 		// Create entity points to make flash visible
-		pointList.clear();
+		hull.clear();
 		final EntityPoint p1 = new EntityPoint(0, 0);
 		p1.setByPosition(this.start);
-		pointList.add(p1);
+		hull.add(p1);
 
 		final EntityPoint p2 = new EntityPoint(0, 0);
 		p2.setByPosition(this.end);
-		pointList.add(p2);
+		hull.add(p2);
 
 		// Prerender backbuffers
 		if (this.glowBackbuffer == null || this.lightBackbuffer == null) {

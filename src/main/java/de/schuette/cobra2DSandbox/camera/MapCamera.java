@@ -22,7 +22,7 @@ import de.schuette.cobra2D.system.Cobra2DEngine;
 public class MapCamera extends Entity implements Camera, ControllerListener {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	protected List<Entity> capturedObjects;
@@ -194,19 +194,19 @@ public class MapCamera extends Entity implements Camera, ControllerListener {
 	}
 
 	public void moveLeft() {
-		this.position.translate(-20, 0);
+		this.position.translate(-5, 0);
 	}
 
 	public void moveRight() {
-		this.position.translate(20, 0);
+		this.position.translate(5, 0);
 	}
 
 	public void moveUp() {
-		this.position.translate(0, -20);
+		this.position.translate(0, -5);
 	}
 
 	public void moveDown() {
-		this.position.translate(0, 20);
+		this.position.translate(0, 5);
 	}
 
 	@Override

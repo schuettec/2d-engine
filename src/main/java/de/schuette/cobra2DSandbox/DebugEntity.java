@@ -21,7 +21,7 @@ public class DebugEntity extends Entity implements Renderable {
 	public DebugEntity(final Cobra2DEngine engine, final Point position) {
 		this.setPosition(position);
 		this.setSize(new Dimension(50, 50));
-		pointList.add(new EntityPoint(0, 0));
+		hull.add(new EntityPoint(0, 0));
 		this.initialize(engine);
 	}
 

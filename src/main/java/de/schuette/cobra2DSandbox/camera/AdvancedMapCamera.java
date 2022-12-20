@@ -1,18 +1,19 @@
 package de.schuette.cobra2DSandbox.camera;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
-import de.schuette.cobra2D.math.Point;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
 import de.schuette.cobra2D.controller.Controller;
+import de.schuette.cobra2D.math.Point;
 import de.schuette.cobra2D.system.Cobra2DEngine;
 import de.schuette.cobra2DSandbox.camera.widgets.TextDisplay;
 
 public class AdvancedMapCamera extends MapCamera {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -28,8 +29,8 @@ public class AdvancedMapCamera extends MapCamera {
 	}
 
 	@Override
-	public void render(final Graphics2D bufferGraphics) {
-		super.render(bufferGraphics);
+	public void render(final Graphics2D graphics) {
+		super.render(graphics);
 
 		/*
 		 * Draw Benchmark to screen
@@ -38,8 +39,9 @@ public class AdvancedMapCamera extends MapCamera {
 			this.drawBenchmark = false;
 		}
 		if (this.drawBenchmark) {
-			this.benchmarkDisplay.drawTextdisplay(this.benchmarkSummary,
-					bufferGraphics);
+			String debugText = "Camera position: " + getPosition().getRoundX() + ":" + getPosition().getRoundY() + "\n"
+					+ this.benchmarkSummary;
+			this.benchmarkDisplay.drawTextdisplay(debugText, graphics);
 		}
 
 		final Controller controller = this.engine.getController();
@@ -55,7 +57,7 @@ public class AdvancedMapCamera extends MapCamera {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.schuette.cobra2DSandbox.entities.camera.MapCamera#keyPressed(int)
 	 */
 	@Override
@@ -81,8 +83,7 @@ public class AdvancedMapCamera extends MapCamera {
 			break;
 		case KeyEvent.VK_F1:
 			this.drawBenchmark = !this.drawBenchmark;
-			this.benchmarkSummary = this.engine.getBenchmarker()
-					.getBenchmarkSummary();
+			this.benchmarkSummary = this.engine.getBenchmarker().getBenchmarkSummary();
 			System.out.println(this.benchmarkSummary);
 			break;
 		default:
@@ -113,4 +114,8 @@ public class AdvancedMapCamera extends MapCamera {
 		this.viewport.height = (int) Math.round(factor * this.viewport.height);
 	}
 
+	protected void drawText(final String text, final Graphics2D g, final int x, final int y) {
+		g.setColor(Color.cyan);
+		g.drawString(text, x, y);
+	}
 }

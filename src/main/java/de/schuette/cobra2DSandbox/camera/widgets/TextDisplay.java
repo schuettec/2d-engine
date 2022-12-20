@@ -3,15 +3,16 @@ package de.schuette.cobra2DSandbox.camera.widgets;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import de.schuette.cobra2D.math.Point;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.Scanner;
 
+import de.schuette.cobra2D.math.Point;
+
 public class TextDisplay implements Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	protected Point position;
@@ -21,14 +22,13 @@ public class TextDisplay implements Serializable {
 	}
 
 	public void drawTextdisplay(final String text, final Graphics2D g) {
-		final Scanner scan = new Scanner(new ByteArrayInputStream(
-				text.getBytes()));
+		final Scanner scan = new Scanner(new ByteArrayInputStream(text.getBytes()));
 
 		g.setColor(Color.CYAN);
 		Font font = g.getFont();
 		g.setFont(new Font("Courier", Font.PLAIN, 10));
 
-		int y = this.position.getRoundY();
+		int y = this.position.getRoundY() + 45;
 		int x = this.position.getRoundX();
 
 		while (scan.hasNextLine()) {

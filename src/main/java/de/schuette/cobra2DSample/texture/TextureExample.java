@@ -73,15 +73,15 @@ public class TextureExample {
 //		map.addEntity(modifier);
 
 		final TextureEntity texture = new TextureEntity();
+		texture.initialize(engine);
 		texture.setPosition(new Point(0, 0));
 		texture.setTextureKey("floor");
-		texture.initialize(engine);
-		texture.createRectangleEntityPoints();
+		texture.createRectangleEntityPointsWithPositionInCenter();
 		map.addEntity(texture);
 
 		final AdvancedMapCamera camera = new AdvancedMapCamera();
 		camera.setBenchmarkEntities(true);
-		camera.setPosition(new Point(-100, -100));
+		camera.setPosition(new Point(0, 0));
 		camera.setFitToResolution(false);
 		camera.initialize(engine);
 		map.addEntity(camera);
